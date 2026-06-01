@@ -65,11 +65,11 @@ Sistema de RH para gestão de setores, cargos, folha de pagamento e holerites, c
 
 - EMAIL_FROM_EMAIL=noreply@yourdomain.com
 
-````
 3. Suba os containers:
+
 ```bash
 docker compose up -d
-````
+```
 
 A aplicação estará disponível em `http://localhost:5001`.
 
