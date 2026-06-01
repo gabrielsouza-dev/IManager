@@ -65,7 +65,7 @@ public class CompaniesRepository : Repository<Company>, ICompaniesRepository
         var result = await dbset.Select(c => new IndexCompanyViewModel() 
         { 
             Id = c.Id,
-            CreatedAt = c.CreatedAt,
+            FoundedAt = c.FoundedAt,
             DocumentNumber = c.DocumentNumber,
             IsActive = c.IsActive,
             LegalName = c.LegalName,

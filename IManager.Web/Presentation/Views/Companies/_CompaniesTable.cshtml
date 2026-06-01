@@ -34,7 +34,7 @@
             <th>Nome Fantasia</th>
             <th>Qnt. Funcionarios</th>
             <th>Qnt. Setores</th>
-            <th>Dt. Criação</th>
+            <th>Dt. Fundação</th>
             <th class="text-center">Ativo</th>
         </tr>
     </thead>
@@ -48,7 +48,7 @@
                 <td class="truncate">@item.TradeName</td>
                 <td class="text-center">@item.EmployeeCount</td>
                 <td class="text-center">@item.DepartmentCount</td>
-                <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                <td>@item.FoundedAt.ToString("dd/MM/yyyy")</td>
                 <td class="text-center">@(item.IsActive ? "✅" : "❌")</td>
             </tr>
         }

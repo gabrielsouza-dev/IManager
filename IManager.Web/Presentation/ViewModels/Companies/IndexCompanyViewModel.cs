@@ -8,6 +8,6 @@ public class IndexCompanyViewModel
     public int DepartmentCount { get; set; }
     public string LegalName { get; set; } = string.Empty;
     public string TradeName { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
+    public DateOnly FoundedAt { get; set; }
     public bool IsActive { get; set; }
 }
