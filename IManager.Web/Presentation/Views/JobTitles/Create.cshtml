@@ -26,7 +26,7 @@
                         <option value="">Selecione a empresa</option>
                         @foreach (var company in companies)
                         {
-                            <option value="@company.Id">@company.TradeName</option>
+                            <option value="@company.Id">@company.TradeName - @MaskHelper.MaskCnpj(company.DocumentNumber)</option>
                         }
                     </select>
                 </div>
@@ -77,8 +77,10 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="DailyHours"></label>
-                <input asp-for="DailyHours" class="form-control" />
+                <label asp-for="DailyHours" class="control-label"></label>
+                <input type="time"
+                       asp-for="DailyHours"
+                       class="form-control" />
                 <span asp-validation-for="DailyHours" class="text-danger"></span>
             </div>
 

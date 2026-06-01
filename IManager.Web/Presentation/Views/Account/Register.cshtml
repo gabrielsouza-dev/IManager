@@ -31,7 +31,7 @@
 
                         @foreach (var company in companies)
                         {
-                            <option value="@company.Id">@company.TradeName</option>
+                            <option value="@company.Id">@company.TradeName - @MaskHelper.MaskCnpj(company.DocumentNumber)</option>
                         }
 
                     </select>

@@ -15,9 +15,7 @@ public class EditJobTitleModelViewValidator : AbstractValidator<EditJobTitleMode
             .NotEmpty().WithMessage("O Nome do cargo é obrigatorio.");
 
         RuleFor(x => x.DailyHours)
-            .GreaterThan(TimeSpan.Zero)
-            .WithMessage("A carga horária diária deve ser maior que zero.")
-            .LessThanOrEqualTo(TimeSpan.FromHours(24))
-            .WithMessage("A carga horária diária não pode ser maior que 24 horas.");
+            .Must(x => x > TimeSpan.Zero && x.TotalHours <= 24)
+            .WithMessage("A carga horária diária deve estar entre 00:00 e 23:59.");
     }
 }
