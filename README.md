@@ -1,13 +1,3 @@
-⚠️ **Nota de Segurança**
-
-> Este projeto utiliza o AutoMapper na versão 13.0.1, que possui uma vulnerabilidade conhecida de negação de serviço (DoS) relacionada à recursão não controlada em grafos de objetos profundos.
->
-> Apesar disso:
->
-> - O mapeamento é realizado sobre objetos com estrutura conhecida e controlada, não sendo expostas estruturas recursivas profundas
->
-> Dessa forma, o risco de exploração neste contexto é considerado baixo. Em um ambiente de produção, seria recomendada a adoção de alternativas mais seguras ou a aplicação de mecanismos adicionais de mitigação.apeamento é realizado sobre objetos com estrutura conhecida e controlada, não sendo expostas estruturas recursivas profundas
-
 # IManager
 
 Sistema de RH para gestão de setores, cargos, folha de pagamento e holerites, com persistência de registros de ponto via integração externa com aplicação IMark.
