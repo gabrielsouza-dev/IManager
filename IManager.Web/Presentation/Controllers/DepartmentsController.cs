@@ -22,7 +22,7 @@ public class DepartmentsController : Controller
     // GET: Departments
     public async Task<IActionResult> Index([FromQuery] string search, [FromQuery] ActiveFilter active = ActiveFilter.Active, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        PagedResult<DepartmentViewModel> model;
+        PagedResult<IndexDepartmentViewModel> model;
         if(User.IsInRole(Role.Staff))
         {
             model = await _departmentService.GetPagedAsync(search, active, page, pageSize);

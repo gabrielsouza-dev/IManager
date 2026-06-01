@@ -40,7 +40,7 @@ public class DepartmentService : IDepartmentService
 
         var model = _mapper.Map<DetailsDepartmentViewModel>(entity);
         var infoModel = await _departmentRepository.GetInfoByIdAsync(id);
-        model.Info = infoModel;
+        model.Info = infoModel!;
 
         return model;
     }
@@ -59,7 +59,7 @@ public class DepartmentService : IDepartmentService
         return departmentsHierarchy;
     }
 
-    public async Task<PagedResult<DepartmentViewModel>> GetPagedAsync(string search, ActiveFilter active, int page, int pageSize, Guid? companyId = null)
+    public async Task<PagedResult<IndexDepartmentViewModel>> GetPagedAsync(string search, ActiveFilter active, int page, int pageSize, Guid? companyId = null)
     {
         Func<IQueryable<Department>, IQueryable<Department>> query = q =>
         {
@@ -97,13 +97,12 @@ public class DepartmentService : IDepartmentService
 
         var totalCount = await _departmentRepository.CountAsync(query);
 
-        IEnumerable<Department> departments = await _departmentRepository.GetAllAsync(query, page, pageSize);
+        var viewModel = await _departmentRepository.GetPagedAsync(query, page, pageSize);
 
-        var departmentDetailsViewModel = _mapper.Map<IEnumerable<DepartmentViewModel>>(departments);
 
-        var pagedViewModel = new PagedResult<DepartmentViewModel>()
+        var pagedViewModel = new PagedResult<IndexDepartmentViewModel>()
         {
-            Items = departmentDetailsViewModel,
+            Items = viewModel,
             Page = page,
             PageSize = pageSize,
             TotalCount = totalCount,

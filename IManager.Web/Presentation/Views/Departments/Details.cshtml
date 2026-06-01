@@ -4,25 +4,28 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Detalhes</h1>
 
 <div>
     <h4>Setor</h4>
     <hr />
+
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedAt)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
+            @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
         </dd>
-        @if(User.IsInRole(Role.Staff))
+
+        @if (User.IsInRole(Role.Staff))
         {
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Company.TradeName)
@@ -30,21 +33,77 @@
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.Company.TradeName)
             </dd>
+
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Company.LegalName)
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.Company.LegalName)
             </dd>
+
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Company.DocumentNumber)
             </dt>
             <dd class="col-sm-10">
-                @MaskHelper.MaskCnpj(Model.Company.DocumentNumber);
+                @MaskHelper.MaskCnpj(Model.Company.DocumentNumber)
             </dd>
         }
     </dl>
 </div>
+
+<div class="mt-4">
+    <h4>Indicadores do Setor</h4>
+    <hr />
+
+    <dl class="row">
+        <dt class="col-sm-4">
+            Total de cargos
+        </dt>
+        <dd class="col-sm-8">
+            @Model.Info.JobTitleCount
+        </dd>
+
+        <dt class="col-sm-4">
+            Total de colaboradores
+        </dt>
+        <dd class="col-sm-8">
+            @Model.Info.EmployeeCount
+        </dd>
+
+        <dt class="col-sm-4">
+            Salário médio
+        </dt>
+        <dd class="col-sm-8">
+            @Model.Info.AverageSalary.ToString("C")
+        </dd>
+
+        <dt class="col-sm-4">
+            Cargo mais comum
+        </dt>
+        <dd class="col-sm-8">
+            @(string.IsNullOrWhiteSpace(Model.Info.MostCommonJobTitle)
+                ? "-"
+                : Model.Info.MostCommonJobTitle)
+        </dd>
+
+        <dt class="col-sm-4">
+            Cargo com maior custo
+        </dt>
+        <dd class="col-sm-8">
+            @(string.IsNullOrWhiteSpace(Model.Info.HighestCostJobTitleName)
+                ? "-"
+                : Model.Info.HighestCostJobTitleName)
+        </dd>
+
+        <dt class="col-sm-4">
+            Custo do cargo mais caro
+        </dt>
+        <dd class="col-sm-8">
+            @Model.Info.HighestCostJobTitleValue.ToString("C")
+        </dd>
+    </dl>
+</div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
     <a asp-action="Index">Back to List</a>

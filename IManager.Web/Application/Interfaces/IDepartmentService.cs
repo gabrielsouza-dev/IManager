@@ -8,7 +8,7 @@ public interface IDepartmentService
     Task<DepartmentViewModel?> GetViewModelByIdAsync(Guid id);
     Task<DetailsDepartmentViewModel?> GetDetailsViewModelByIdAsync(Guid id);
     Task<IEnumerable<DepartmentHierarchyViewModel>> GetDepartmentsHierarchyViewModelAsync(Guid? companyId = null);
-    Task<PagedResult<DepartmentViewModel>> GetPagedAsync(string search, ActiveFilter active, int page, int pageSize, Guid? companyId = null);
+    Task<PagedResult<IndexDepartmentViewModel>> GetPagedAsync(string search, ActiveFilter active, int page, int pageSize, Guid? companyId = null);
     Task<Result> CreateAsync(CreateDepartmentViewModel department);
     Task<EditDepartmentViewModel?> GetEditViewModelByIdAsync(Guid id);
     Task<Result> UpdateAsync(EditDepartmentViewModel department);

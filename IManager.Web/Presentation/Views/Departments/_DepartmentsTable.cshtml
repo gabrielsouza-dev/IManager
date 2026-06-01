@@ -1,4 +1,4 @@
-﻿@model PagedResult<DepartmentViewModel>
+﻿@model PagedResult<IndexDepartmentViewModel>
 
 <form method="get" class="d-flex justify-content-between align-items-center mb-3">
     <div>
@@ -35,6 +35,8 @@
                 <th>CNPJ</th>
             }
             <th>Setor</th>
+            <th>Qnt. Cargos</th>
+            <th>Qnt. Funcionários</th>
             <th>Data de Criação</th>
             <th class="text-center">Ativo</th>
         </tr>
@@ -46,10 +48,12 @@
             <tr data-id="@item.Id" data-active="@item.IsActive">
                 @if (User.IsInRole(Role.Staff))
                 {
-                    <td class="truncate">@item.Company.TradeName</td>
-                    <td>@MaskHelper.MaskCnpj(item.Company.DocumentNumber)</td>
+                    <td class="truncate">@item.CompanyTradeName</td>
+                    <td>@MaskHelper.MaskCnpj(item.CompanyDocumentNumber)</td>
                 }
                 <td class="truncate">@item.Name</td>
+                <td class ="text-center">@item.JobTitleCount</td>
+                <td class="text-center">@item.EmployeeCount</td>
                 <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
                 <td class="text-center">@(item.IsActive ? "✅" : "❌")</td>
             </tr>
