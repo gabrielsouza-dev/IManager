@@ -60,7 +60,7 @@
                 <td class="text-center">@(item.IsUnhealthy ? "✅" : "❌")</td>
                 <td class="text-center">@(item.IsCommissioned ? "✅" : "❌")</td>
                 <td class="text-center">@item.EmployeeCount</td>
-                <td>@item.DailyHours.ToString(@"hh\:mm")</td>
+                <td class="text-center">@item.DailyHours.ToString(@"hh\:mm")</td>
                 <td class="text-center">@((item.IsActive) ? "✅" : "❌")</td>
             </tr>
         }
