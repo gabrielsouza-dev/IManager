@@ -39,6 +39,7 @@
             <th>Perigoso</th>
             <th>Insalubre</th>
             <th>Comissionado</th>
+            <th>Qnt. Funcionarios</th>
             <th>Horas Diárias</th>
             <th class="text-center">Ativo</th>
         </tr>
@@ -58,6 +59,7 @@
                 <td class="text-center">@(item.IsHazard ? "✅" : "❌")</td>
                 <td class="text-center">@(item.IsUnhealthy ? "✅" : "❌")</td>
                 <td class="text-center">@(item.IsCommissioned ? "✅" : "❌")</td>
+                <td class="text-center">@item.EmployeeCount</td>
                 <td>@item.DailyHours</td>
                 <td class="text-center">@((item.IsActive) ? "✅" : "❌")</td>
             </tr>

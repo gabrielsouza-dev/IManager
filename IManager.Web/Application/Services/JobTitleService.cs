@@ -127,9 +127,7 @@ public class JobTitleService : IJobTitleService
 
         var totalCount = await _jobTitleRepository.CountAsync(query);
 
-        IEnumerable<JobTitle> jobTitles = await _jobTitleRepository.GetAllAsync(query, page, pageSize);
-
-        var indexModelView = _mapper.Map<IEnumerable<IndexJobTitleModelView>>(jobTitles);
+        IEnumerable<IndexJobTitleModelView> indexModelView = await _jobTitleRepository.GetPagedAsync(query, page, pageSize);
 
         var pagedViewModel = new PagedResult<IndexJobTitleModelView>()
         {

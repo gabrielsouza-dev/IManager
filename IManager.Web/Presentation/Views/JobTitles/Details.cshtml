@@ -1,69 +1,134 @@
 ﻿@model DetailsJobTitleModelView
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Cargo";
 }
 
-<h1>Details</h1>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Detalhes do Cargo</h2>
+    </div>
 
-<div>
-    <h4>JobTitle</h4>
-    <hr />
-    <dl class="row">
-        @if (User.IsInRole(Role.Staff))
-        {
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CompanyTradeName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CompanyTradeName)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CompanyDocumentNumber)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CompanyDocumentNumber)
-            </dd>
-        }
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DepartmentName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DepartmentName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsHazard)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsHazard)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsUnhealthy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsUnhealthy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsCommissioned)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsCommissioned)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DailyHours)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DailyHours)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">@Model.Name</h5>
+        </div>
+
+        <div class="card-body">
+            <dl class="row">
+
+                @if (User.IsInRole(Role.Staff))
+                {
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.CompanyTradeName)
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.CompanyTradeName)
+                    </dd>
+
+                    <dt class="col-sm-3">
+                        @Html.DisplayNameFor(model => model.CompanyDocumentNumber)
+                    </dt>
+                    <dd class="col-sm-9">
+                        @Html.DisplayFor(model => model.CompanyDocumentNumber)
+                    </dd>
+                }
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.DepartmentName)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.DepartmentName)
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.IsHazard)
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.IsHazard ? "Sim" : "Não")
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.IsUnhealthy)
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.IsUnhealthy ? "Sim" : "Não")
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.IsCommissioned)
+                </dt>
+                <dd class="col-sm-9">
+                    @(Model.IsCommissioned ? "Sim" : "Não")
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.DailyHours)
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.DailyHours.ToString(@"hh\:mm")
+                </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
+                        @(Model.IsActive ? "Ativo" : "Inativo")
+                    </span>
+                </dd>
+
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Informações do Cargo</h5>
+        </div>
+
+        <div class="card-body">
+            <dl class="row">
+
+                <dt class="col-sm-3">
+                    Quantidade de Funcionários
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Info.EmployeeCount
+                </dd>
+
+                <dt class="col-sm-3">
+                    Salário Médio
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Info.AverageSalary.ToString("C")
+                </dd>
+
+                <dt class="col-sm-3">
+                    Custo Total
+                </dt>
+                <dd class="col-sm-9">
+                    @Model.Info.TotalCost.ToString("C")
+                </dd>
+
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            Editar
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Voltar
+        </a>
+    </div>
 </div>
