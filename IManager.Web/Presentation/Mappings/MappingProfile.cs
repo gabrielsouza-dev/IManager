@@ -93,6 +93,7 @@ public class MappingProfile : Profile
     private void MapTimeTracking()
     {
         CreateMap<TimeEntry, TimeEntryDTO>().ReverseMap();
-        CreateMap<TimeCheck, TimeCheckDTO>().ReverseMap();
+        CreateMap<TimeCheck, TimeCheckDTO>()
+            .ReverseMap();
     }
 }

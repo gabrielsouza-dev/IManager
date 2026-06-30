@@ -6,6 +6,6 @@ public class TimeCheck : BaseEntity
 {
     public Guid TimeEntryId { get; set; }
     public TimeEntry TimeEntry { get; set; } = null!;
-
+    public string TimeZoneId { get; set; } = string.Empty;
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 }

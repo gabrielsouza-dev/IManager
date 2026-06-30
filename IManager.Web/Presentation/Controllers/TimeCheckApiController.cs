@@ -68,6 +68,7 @@ public class TimeCheckApiController : ControllerBase
             {
                 TimeEntryId = timeEntry.Id,
                 Timestamp = request.Timestamp,
+                TimeZoneId = request.TimeZoneId
             };
 
             await _timeCheckRepository.AddAsync(timeCheck);
