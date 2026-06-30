@@ -5,14 +5,12 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Serilog;
 using System.Globalization;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews(options =>
 {
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 }).AddRazorRuntimeCompilation();
 
 builder.Services.Configure<RazorViewEngineOptions>(options =>
@@ -100,6 +98,7 @@ app.UseStatusCodePages(async context =>
 });
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
 
 app.UseRateLimiter();
