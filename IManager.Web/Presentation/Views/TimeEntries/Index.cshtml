@@ -1,0 +1,78 @@
+﻿@model IEnumerable<DateOnly>
+
+@{
+    ViewData["Title"] = "Gerenciamento de Ponto";
+}
+
+<div class="btn-group w-100" role="group">
+    <input type="radio" class="btn-check" name="tabs" id="pending" checked>
+    <label class="btn btn-outline-primary" for="pending">
+        Pendencias
+    </label>
+
+    <input type="radio" class="btn-check" name="tabs" id="approved">
+    <label class="btn btn-outline-primary" for="approved">
+        Historico de Auditoria
+    </label>
+</div>
+
+<div id="pendingContent">
+    <label for="data">Competência: 
+        <select id="data" name="data">
+            <option value="">Selecione um mês</option>
+
+            @foreach (var data in Model)
+            {
+                <option value="@data.ToString("yyyy-MM-dd")">
+                    @data.ToString("MM/yyyy")
+                </option>
+            }
+        </select>
+    </label>
+</div>
+
+<div id="approvedContent" style="display: none;">
+    Approved content
+</div>
+
+<div id="timeEntryTableContainer" />
+
+
+<script>
+    const pending = document.getElementById("pending");
+    const approved = document.getElementById("approved");
+
+    const pendingContent = document.getElementById("pendingContent");
+    const approvedContent = document.getElementById("approvedContent");
+
+    function updateTabs() {
+        document.getElementById("data").value = "";
+        if (pending.checked) {
+            pendingContent.style.display = "block";
+            approvedContent.style.display = "none";
+        } else {
+            pendingContent.style.display = "none";
+            approvedContent.style.display = "block";
+        }
+
+        document.getElementById("timeEntryTableContainer").innerHTML = null;
+    }
+
+    pending.addEventListener("change", updateTabs);
+    approved.addEventListener("change", updateTabs);
+
+    updateTabs();
+
+    document.getElementById("data").addEventListener("change", function () {
+    var selectedDate = this.value;
+    if (selectedDate) {
+        fetch(`/TimeEntries/_timeEntryPendentTable?date=${selectedDate}`)
+            .then(response => response.text())
+            .then(html => {
+                const container = document.getElementById("timeEntryTableContainer");
+                container.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching time entries:', error));
+        }
+    });
+</script>

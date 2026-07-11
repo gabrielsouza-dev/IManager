@@ -1,0 +1,168 @@
+﻿@model IEnumerable<TimeEntryPending>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Funcionário</th>
+            <th class="text-center">Data</th>
+            <th class="text-center">Checks</th>
+            <th class="text-center">Total</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Consistente</th>
+            <th>Criado em</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var timeEntry in Model)
+        {
+            var originalChecks = string.Join(" ",
+                timeEntry.OriginalChecks
+                .OrderBy(c => c.TimestampLocal)
+                .Select(c => c.TimestampLocal.ToString("HH:mm")));
+
+            var newChecks = string.Join(" ",
+                timeEntry.NewChecks
+                    .OrderBy(c => c.TimestampLocal)
+                    .Select(c => c.TimestampLocal.ToString("HH:mm")));
+
+            <tr id="row-@timeEntry.Id">
+                <td>@timeEntry.EmployeeName</td>
+                <td class="text-center">@timeEntry.Date.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">@newChecks</td>
+                <td class="text-center">@timeEntry.HoursWorked.ToString(@"hh\:mm")</td>
+                <td class="text-center">@timeEntry.Status</td>
+                <td class="text-center">@(timeEntry.IsConsistent ? "✔" : "✖")</td>
+                <td>@timeEntry.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+
+                <td>
+                    <button id="approve-btn" type="button" class="btn btn-outline-primary btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#approveModal"
+                            data-id="@timeEntry.Id"
+                            data-employee="@timeEntry.EmployeeName"
+                            data-date="@timeEntry.Date.ToString("dd/MM/yyyy")"
+                            data-originalchecks="@originalChecks"
+                            data-newchecks="@newChecks"
+                            data-adjustmentreason="@timeEntry.AdjustmentReason"
+                            data-total="@timeEntry.HoursWorked.ToString(@"hh\:mm")">
+                        ✔ Aprovar
+                    </button>
+                </td>
+
+                <td>
+                    <button id="reject-btn" type="button" class="btn btn-outline-danger btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#rejectModal"
+                            data-id="@timeEntry.Id"
+                            data-employee="@timeEntry.EmployeeName"
+                            data-date="@timeEntry.Date.ToString("dd/MM/yyyy")"
+                            data-originalchecks="@originalChecks"
+                            data-newchecks="@newChecks"
+                            data-adjustmentreason="@timeEntry.AdjustmentReason"
+                            data-total="@timeEntry.HoursWorked.ToString(@"hh\:mm")">
+                        ✖ Reprovar
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal de APROVAÇÃO -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="approveForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Aprovar Ponto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="approveEntryId" />
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Funcionário</dt>
+                        <dd class="col-sm-8" id="approveEmployee"></dd>
+
+                        <dt class="col-sm-4">Data</dt>
+                        <dd class="col-sm-8" id="approveDate"></dd>
+
+                        <dt class="col-sm-4">Batidas Originais</dt>
+                        <dd class="col-sm-8" id="approveOriginalChecks"></dd>
+
+                        <dt class="col-sm-4">Novas Batidas</dt>
+                        <dd class="col-sm-8" id="approveNewChecks"></dd>
+
+                        <dt class="col-sm-4">Total</dt>
+                        <dd class="col-sm-8" id="approveTotal"></dd>
+
+                        <dt class="col-sm-4">Motivo do Ajuste</dt>
+                        <dd class="col-sm-8" id="approveAdjustmentReason"></dd>
+                    </dl>
+
+                    <p>Tem certeza que deseja aprovar este ponto?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">✔ Confirmar Aprovação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de REPROVAÇÃO -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="rejectForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reprovar Ponto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="rejectEntryId" />
+
+                    <dl class="row">
+                        <dt class="col-sm-4">Funcionário</dt>
+                        <dd class="col-sm-8" id="rejectEmployee"></dd>
+
+                        <dt class="col-sm-4">Data</dt>
+                        <dd class="col-sm-8" id="rejectDate"></dd>
+
+                        <dt class="col-sm-4">Batidas Originais</dt>
+                        <dd class="col-sm-8" id="rejectOriginalChecks"></dd>
+
+                        <dt class="col-sm-4">Novas Batidas</dt>
+                        <dd class="col-sm-8" id="rejectNewChecks"></dd>
+
+                        <dt class="col-sm-4">Total</dt>
+                        <dd class="col-sm-8" id="rejectTotal"></dd>
+
+                        <dt class="col-sm-4">Motivo do Ajuste</dt>
+                        <dd class="col-sm-8" id="rejectAdjustmentReason"></dd>
+                    </dl>
+
+                    <div class="mb-3">
+                        <label for="rejectReason" class="form-label">Motivo da Reprovação</label>
+                        <textarea class="form-control" id="rejectReason" rows="3" required></textarea>
+                        <div class="invalid-feedback" id="rejectReasonError">
+                            O motivo é obrigatório para reprovação.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">✖ Confirmar Reprovação</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

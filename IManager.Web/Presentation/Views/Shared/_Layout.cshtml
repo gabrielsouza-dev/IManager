@@ -48,16 +48,22 @@
                                         <a class="nav-link" asp-controller="JobTitles" asp-action="Index">Cargos</a>
                                     </li>
 
-                                    <li class="nav-item">
+@*                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="Payrolls" asp-action="Index">Folhas de Pagamento</a>
-                                    </li>
+                                    </li> *@
                                 }
-                                
+                                @if(User.IsInRole(Role.Admin))
+                                {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="TimeEntries" asp-action="Index">Gerenciamento de Ajustes</a>
+                                </li>
+                                }
                                 @if (User.IsInRole(Role.User))
                                 {
-                                    <li class="nav-item">
+                                    //TODO: Incluir link para alicativo de ponto.
+@*                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="TimeChecks" asp-action="Index">Registro de pontos</a>
-                                    </li>
+                                    </li> *@
 
                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="Payslips" asp-action="Index">Holerites</a>
@@ -112,7 +118,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/timeEntryPendingTable.js" asp-append-version="true"></script>
     @await Html.PartialAsync("_Toasts")
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -14,6 +14,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using System.Security.Claims;
 namespace IManager.Web.Presentation.Controllers;
 
+//TODO: Implementar Service para TimeCheck e TimeEntry.
 [ApiController]
 [Route("api/timecheck")]
 [Authorize(Roles = Role.User)]

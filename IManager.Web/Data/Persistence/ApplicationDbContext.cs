@@ -153,7 +153,16 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                   .WithOne(e => e.TimeEntry)
                   .HasForeignKey(e => e.TimeEntryId)
                   .OnDelete(DeleteBehavior.Cascade); // checks dependem totalmente do TimeEntry
-            
+
+            entity.HasIndex(e => new { e.EmployeeId, e.Date })
+                  .HasFilter("\"IsCurrent\" = true")
+                  .IsUnique();
+
+            entity.HasOne(e => e.Parent)
+                  .WithMany()
+                  .HasForeignKey(e => e.ParentId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
             entity.Ignore(te => te.HoursWorked);
 
             entity.Ignore(te => te.IsConsistent);
