@@ -59,7 +59,7 @@ public class AccountService : IAccountService
 
             var jobTitle = await _jobTitleRepository.GetByIdAsync(userProfile.JobTitleId, q => 
                                 q.Include(c => c.Department).ThenInclude(d => d.Company))
-                                ?? throw new ArgumentNullException("JobTitle não localizado.");
+                                ?? throw new InvalidOperationException("JobTitle não localizado.");
 
             await _userManager.AddClaimsAsync(user, new List<Claim>
             {

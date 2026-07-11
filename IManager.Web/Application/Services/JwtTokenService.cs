@@ -29,11 +29,11 @@ public class JwtTokenService
 
     public async Task<string> GenerateTokenAsync(User user)
     {
-        var userProfile = await _userProfileRepository.GetByIdAsync(user.Id) ?? throw new ArgumentNullException("UserProfile não localizado.");
+        var userProfile = await _userProfileRepository.GetByIdAsync(user.Id) ?? throw new InvalidOperationException("UserProfile não localizado.");
 
         var jobTitle = await _jobTitleRepository.GetByIdAsync(userProfile.JobTitleId, q =>
                     q.Include(c => c.Department).ThenInclude(d => d.Company))
-                    ?? throw new ArgumentNullException("JobTitle não localizado.");
+                    ?? throw new InvalidOperationException("JobTitle não localizado.");
 
         var claims = new List<Claim>
         {
