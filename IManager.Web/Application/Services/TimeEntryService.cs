@@ -51,11 +51,11 @@ public class TimeEntryService : ITimeEntryService
             var timeEntry = await GetTimeEntryOrThrow(id);
 
             timeEntry.Parent!.IsCurrent = false;
-            await _unitOfWork.SaveChangesAsync();
+            await _timeEntryRepository.UpdateAsync(timeEntry.Parent);
 
             timeEntry.IsCurrent = true;
             timeEntry.Status = TimeEntryStatus.Accepted;
-            await _unitOfWork.SaveChangesAsync();
+            await _timeEntryRepository.UpdateAsync(timeEntry);
 
             await _unitOfWork.CommitAsync();
 
@@ -86,11 +86,11 @@ public class TimeEntryService : ITimeEntryService
 
             timeEntry.IsCurrent = false;
             timeEntry.Status = TimeEntryStatus.Rejected;
-            await _unitOfWork.SaveChangesAsync();
+            timeEntry.RejectionReason = comment;
+            await _timeEntryRepository.UpdateAsync(timeEntry);
 
             timeEntry.Parent!.IsCurrent = true;
-            timeEntry.RejectionReason = comment;
-            await _unitOfWork.SaveChangesAsync();
+            await _timeEntryRepository.UpdateAsync(timeEntry.Parent);
 
             await _unitOfWork.CommitAsync();
 
