@@ -16,46 +16,51 @@
     </label>
 </div>
 
-<div id="pendingContent">
-    <label for="data">Competência: 
-        <select id="data" name="data">
-            <option value="">Selecione um mês</option>
+<label for="data" class="mt-3">
+    Competência:
+    <select id="data" name="data">
+        <option value="">Selecione um mês</option>
 
-            @foreach (var data in Model)
-            {
-                <option value="@data.ToString("yyyy-MM-dd")">
-                    @data.ToString("MM/yyyy")
-                </option>
-            }
-        </select>
-    </label>
-</div>
+        @foreach (var data in Model)
+        {
+            <option value="@data.ToString("yyyy-MM-dd")">
+                @data.ToString("MM/yyyy")
+            </option>
+        }
+    </select>
+</label>
 
-<div id="approvedContent" style="display: none;">
-    Approved content
-</div>
-
-<div id="timeEntryTableContainer" />
+<div class="mt-3" id="timeEntryTableContainer" />
 
 
 <script>
     const pending = document.getElementById("pending");
     const approved = document.getElementById("approved");
-
-    const pendingContent = document.getElementById("pendingContent");
-    const approvedContent = document.getElementById("approvedContent");
+    const tableContainer = document.getElementById("timeEntryTableContainer");
 
     function updateTabs() {
         document.getElementById("data").value = "";
-        if (pending.checked) {
-            pendingContent.style.display = "block";
-            approvedContent.style.display = "none";
-        } else {
-            pendingContent.style.display = "none";
-            approvedContent.style.display = "block";
-        }
 
-        document.getElementById("timeEntryTableContainer").innerHTML = null;
+        tableContainer.innerHTML = null;
+    }
+
+    function fetchTimeEntryAudict(selectedDate) {
+        fetch(`/TimeEntries/_timeEntryAudictTable?date=${selectedDate}`)
+            .then(response => response.text())
+            .then(html => {
+                tableContainer.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching time entries:', error));
+    }
+
+    function fetchTimeEntryPending(selectedDate) {
+
+        fetch(`/TimeEntries/_timeEntryPendentTable?date=${selectedDate}`)
+            .then(response => response.text())
+            .then(html => {
+                tableContainer.innerHTML = html;
+            })
+            .catch(error => console.error('Error fetching time entries:', error));
     }
 
     pending.addEventListener("change", updateTabs);
@@ -64,15 +69,13 @@
     updateTabs();
 
     document.getElementById("data").addEventListener("change", function () {
-    var selectedDate = this.value;
-    if (selectedDate) {
-        fetch(`/TimeEntries/_timeEntryPendentTable?date=${selectedDate}`)
-            .then(response => response.text())
-            .then(html => {
-                const container = document.getElementById("timeEntryTableContainer");
-                container.innerHTML = html;
-            })
-            .catch(error => console.error('Error fetching time entries:', error));
+        var selectedDate = this.value;
+        if (selectedDate) {
+            if (pending.checked) {
+                fetchTimeEntryPending(selectedDate);
+            } else if (approved.checked) {
+                fetchTimeEntryAudict(selectedDate);
+            }
         }
     });
 </script>

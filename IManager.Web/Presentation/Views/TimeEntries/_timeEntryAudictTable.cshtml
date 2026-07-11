@@ -1,0 +1,47 @@
+﻿@using IManager.Web.Domain.Enums
+@model IEnumerable<TimeEntryAudict>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Funcionário</th>
+            <th class="text-center">Data</th>
+            <th class="text-center">Antigos Checks</th>
+            <th class="text-center">Novo Checks</th>
+            <th class="text-center">Total</th>
+            <th class="text-center">Consistente</th>
+            <th>Criado em</th>
+            <th>Auditado em</th>
+            <th>Auditado por</th>
+            <th class="text-center">Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var timeEntry in Model)
+        {
+            var originalChecks = string.Join(" ",
+                timeEntry.OriginalChecks
+                .OrderBy(c => c.TimestampLocal)
+                .Select(c => c.TimestampLocal.ToString("HH:mm")));
+
+            var newChecks = string.Join(" ",
+                timeEntry.NewChecks
+                    .OrderBy(c => c.TimestampLocal)
+                    .Select(c => c.TimestampLocal.ToString("HH:mm")));
+
+            <tr id="row-@timeEntry.Id">
+                <td>@timeEntry.EmployeeName</td>
+                <td class="text-center">@timeEntry.Date.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">@originalChecks</td>
+                <td class="text-center">@newChecks</td>
+                <td class="text-center">@timeEntry.HoursWorked.ToString(@"hh\:mm")</td>
+                <td class="text-center">@(timeEntry.IsConsistent ? "✔" : "✖")</td>
+                <td>@timeEntry.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@timeEntry.LastModified.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@timeEntry.LastModifierName</td>
+                <td class="text-center  @(timeEntry.Status == TimeEntryStatus.Accepted ? "text-success" : "text-danger")">@timeEntry.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>
