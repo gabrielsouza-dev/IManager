@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using IManager.Web.Data.Seeder;
 using IManager.Web.Domain.Consts;
+using IManager.Web.Domain.Entities;
 using IManager.Web.Domain.Entities.Companies;
 using IManager.Web.Domain.Entities.Payrolls;
 using IManager.Web.Domain.Entities.TimeTrackings;
@@ -51,6 +52,17 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes()
+            .Where(e => typeof(BaseEntity).IsAssignableFrom(e.ClrType)))
+                {
+                    modelBuilder.Entity(entityType.ClrType)
+                        .HasOne(typeof(User), nameof(BaseEntity.LastModifier))
+                        .WithMany()
+                        .HasForeignKey(nameof(BaseEntity.LastModifierId))
+                        .IsRequired(false)
+                        .OnDelete(DeleteBehavior.Restrict);
+                }
 
         // Chave primária explícita para UserProfile
         modelBuilder.Entity<UserProfile>()

@@ -21,6 +21,15 @@ public class TimeEntryService : ITimeEntryService
         _logger = logger;
     }
 
+    public async Task<IEnumerable<TimeEntryAudict>> GetAllAudictViewModel(Guid companyId, DateOnly date)
+    {
+        if (companyId == Guid.Empty)
+            return Enumerable.Empty<TimeEntryAudict>();
+
+        var model = await _timeEntryRepository.GetAudictoryHistory(companyId, date);
+        return model;
+    }
+
     public async Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly date   )
     {
         if(companyId == Guid.Empty)

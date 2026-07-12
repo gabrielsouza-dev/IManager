@@ -11,13 +11,27 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
 {
     public TimeEntryRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<TimeEntry>> GetAudictoryHistory(Guid companyId)
+    public async Task<IEnumerable<TimeEntryAudict>> GetAudictoryHistory(Guid companyId, DateOnly date)
     {
         return await _dbSet
             .Where(t => 
                 t.Employee.CompanyId == companyId && 
-                t.ParentId != null)
-            .Select(t => t)
+                t.ParentId != null && 
+                t.Status != TimeEntryStatus.Pending &&
+                t.Date.Month == date.Month &&
+                t.Date.Year == date.Year)
+            .Select(t => new TimeEntryAudict
+            {
+                Id = t.Id,
+                EmployeeName = t.Employee.FullName,
+                Date = t.Date,
+                OriginalChecks = t.Parent!.Checks,
+                NewChecks = t.Checks,
+                CreatedAt = t.CreatedAt,
+                LastModifierName = t.LastModifier!.UserProfile!.FullName ?? "System",
+                LastModified = t.LastModified ?? DateTime.MinValue,
+                Status = t.Status
+            })
             .OrderByDescending(t => t.LastModified)
             .ToListAsync();
     }
@@ -27,6 +41,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var result = await _dbSet
             .Where(t =>
                 t.Employee.CompanyId == companyId &&
+                t.ParentId != null &&
                 t.Status == TimeEntryStatus.Pending)
             .Select(t => new
             {

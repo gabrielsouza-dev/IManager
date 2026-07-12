@@ -5,6 +5,7 @@ namespace IManager.Web.Application.Interfaces;
 
 public interface ITimeEntryService
 {
+    Task<IEnumerable<TimeEntryAudict>> GetAllAudictViewModel(Guid companyId, DateOnly date);
     Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly date);
     Task<IEnumerable<DateOnly>> GetPendentDates(Guid companyId);
     Task<Result> ManageApprove(Guid id);

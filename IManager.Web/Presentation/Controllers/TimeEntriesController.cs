@@ -36,6 +36,15 @@ public class TimeEntriesController : Controller
         return PartialView(model);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> _timeEntryAudictTable(DateOnly date)
+    {
+        var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
+
+        IEnumerable<TimeEntryAudict> model = await _timeEntryService.GetAllAudictViewModel(companyId, date);
+        return PartialView(model);
+    }
+
     [HttpPost]
     public async Task<IActionResult> ManageTimeEntryAction([FromBody] TimeEntryActionRequest request)
     {
