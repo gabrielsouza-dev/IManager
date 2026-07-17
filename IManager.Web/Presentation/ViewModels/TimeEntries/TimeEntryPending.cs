@@ -10,13 +10,13 @@ public class TimeEntryPending
     public Guid EmployeeId { get; set; }
     public string EmployeeName { get; set; } = string.Empty;
     public DateOnly Date { get; set; }
-    public ICollection<TimeCheck> OriginalChecks { get; set; } = new List<TimeCheck>();
-    public ICollection<TimeCheck> NewChecks { get; set; } = new List<TimeCheck>();
+    public ICollection<TimeCheckViewModel> OriginalChecks { get; set; } = new List<TimeCheckViewModel>();
+    public ICollection<TimeCheckViewModel> NewChecks { get; set; } = new List<TimeCheckViewModel>();
     public TimeEntryStatus Status { get; set; }
     public Guid? ParentId { get; set; }
     public string? AdjustmentReason { get; set; }
     public DateTime CreatedAt { get; set; }
-    public bool IsConsistent => NewChecks.IsConsistent();
-    public TimeSpan HoursWorked => NewChecks.GetHoursWorked();
+    public bool IsConsistent { get; set; }
+    public TimeSpan HoursWorked { get; set; }
     public bool IsCurrent { get; set; } = true;
 }

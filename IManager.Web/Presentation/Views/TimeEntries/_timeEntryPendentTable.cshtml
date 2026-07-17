@@ -16,6 +16,13 @@
     </thead>
 
     <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">Nenhum ajuste de ponto pendente.</td>
+            </tr>
+        }
+
         @foreach (var timeEntry in Model)
         {
             var originalChecks = string.Join(" ",

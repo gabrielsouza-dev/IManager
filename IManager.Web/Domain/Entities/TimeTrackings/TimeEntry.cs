@@ -1,4 +1,5 @@
-﻿using IManager.Web.Domain.Entities.Users;
+﻿using IManager.Web.Domain.Entities.Payrolls;
+using IManager.Web.Domain.Entities.Users;
 using IManager.Web.Domain.Enums;
 using IManager.Web.Shared.Helpers;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,6 +10,9 @@ public class TimeEntry : BaseEntity
 {
     public Guid EmployeeId { get; set; }
     public UserProfile Employee { get; set; } = null!;
+
+    public Guid? PayslipId { get; set; }
+    public Payslip? Payslip { get; set; }
 
     public ICollection<TimeCheck> Checks { get; set; } = new List<TimeCheck>();
 
