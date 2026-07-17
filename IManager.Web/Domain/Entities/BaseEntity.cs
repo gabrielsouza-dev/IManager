@@ -29,9 +29,11 @@ public abstract class BaseEntity
         DeletedAt = DateTime.UtcNow;
     }
 
-    public void Touch(Guid? id = null)
+    public void Touch(Guid? audictorId = null)
     {
+        if (audictorId == Guid.Empty) audictorId = null;
+
         LastModified = DateTime.UtcNow;
-        LastModifierId = id;
+        LastModifierId = audictorId;
     }
 }

@@ -5,6 +5,7 @@ using IManager.Web.Shared;
 using IManager.Web.Shared.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace IManager.Web.Presentation.Controllers;
 
@@ -50,12 +51,14 @@ public class TimeEntriesController : Controller
     {
         if (request.Id == Guid.Empty)
             return BadRequest("ID inválido.");
+        
+        var audictorId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
 
         Result result;
         if (request.IsApprove)
-            result = await _timeEntryService.ManageApprove(request.Id);
+            result = await _timeEntryService.ManageApprove(request.Id, audictorId);
         else
-            result = await _timeEntryService.ManageReject(request.Id, request.Comment);
+            result = await _timeEntryService.ManageReject(request.Id, request.Comment, audictorId);
 
         if (result.Succeeded)
             TempData[ToastMessages.Success] = "Processamento realizado com sucesso!";

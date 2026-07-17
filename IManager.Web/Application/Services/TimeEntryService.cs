@@ -3,6 +3,7 @@ using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Enums;
 using IManager.Web.Domain.Interfaces.Persistence;
 using IManager.Web.Domain.Interfaces.Repositories;
+using IManager.Web.Presentation.ViewModels.Payrolls;
 using IManager.Web.Presentation.ViewModels.TimeEntries;
 using IManager.Web.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,7 @@ public class TimeEntryService : ITimeEntryService
         return model;
     }
 
-    public async Task<Result> ManageApprove(Guid id)
+    public async Task<Result> ManageApprove(Guid id, Guid audictorId)
     {
         if(id == Guid.Empty)
             return Result.Fail("Id invalido.");
@@ -64,7 +65,7 @@ public class TimeEntryService : ITimeEntryService
 
             timeEntry.IsCurrent = true;
             timeEntry.Status = TimeEntryStatus.Accepted;
-            await _timeEntryRepository.UpdateAsync(timeEntry);
+            await _timeEntryRepository.UpdateAsync(timeEntry, audictorId);
 
             await _unitOfWork.CommitAsync();
 
@@ -79,7 +80,7 @@ public class TimeEntryService : ITimeEntryService
         }
     }
 
-    public async Task<Result> ManageReject(Guid id, string? comment)
+    public async Task<Result> ManageReject(Guid id, string? comment, Guid audictorId)
     {
         if (id == Guid.Empty)
             return Result.Fail("Id invalido.");
@@ -96,7 +97,7 @@ public class TimeEntryService : ITimeEntryService
             timeEntry.IsCurrent = false;
             timeEntry.Status = TimeEntryStatus.Rejected;
             timeEntry.RejectionReason = comment;
-            await _timeEntryRepository.UpdateAsync(timeEntry);
+            await _timeEntryRepository.UpdateAsync(timeEntry, audictorId);
 
             timeEntry.Parent!.IsCurrent = true;
             await _timeEntryRepository.UpdateAsync(timeEntry.Parent);
