@@ -1,4 +1,5 @@
-﻿using IManager.Web.Domain.Entities.Users;
+﻿using IManager.Web.Domain.Entities.TimeTrackings;
+using IManager.Web.Domain.Entities.Users;
 
 namespace IManager.Web.Domain.Entities.Payrolls;
 
@@ -9,6 +10,8 @@ public class Payslip : BaseEntity
 
     public Guid EmployeeId { get; set; }
     public UserProfile Employee { get; set; } = null!;
+    public ICollection<TimeEntry> TimeEntries { get; set; } = new List<TimeEntry>();
+
 
     public decimal GrossSalary { get; set; } = 0m;
     public decimal TotalEarnings { get; set; }//=> GrossSalary + OvertimeAdditionals + HazardPay + UnhealthyPay + Commission;

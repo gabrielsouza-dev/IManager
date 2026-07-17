@@ -191,13 +191,23 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         modelBuilder.Entity<Payroll>(entity =>
         {
             entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Company)
+                  .WithMany()
+                  .HasForeignKey(e => e.CompanyId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
             entity.Property(e => e.PeriodStart).IsRequired();
             entity.Property(e => e.PeriodEnd).IsRequired();
+            entity.Property(e => e.Competence).IsRequired();
 
             entity.HasMany(e => e.Payslips)
                   .WithOne(e => e.Payroll)
                   .HasForeignKey(e => e.PayrollId)
-                  .OnDelete(DeleteBehavior.Restrict);
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => new { e.CompanyId, e.Competence })
+                  .IsUnique();
         });
 
         // Payslip
@@ -212,6 +222,11 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(e => e.INSSDeduction).HasColumnType("decimal(18,2)");
             entity.Property(e => e.IRRFDeduction).HasColumnType("decimal(18,2)");
             entity.Property(e => e.OtherDeductions).HasColumnType("decimal(18,2)");
+
+            entity.HasMany(e => e.TimeEntries)
+                  .WithOne(t => t.Payslip)
+                  .HasForeignKey(t => t.PayslipId)
+                  .OnDelete(DeleteBehavior.SetNull);
 
             // propriedades calculadas são ignoradas pelo EF
             //entity.Ignore(e => e.TotalEarnings);

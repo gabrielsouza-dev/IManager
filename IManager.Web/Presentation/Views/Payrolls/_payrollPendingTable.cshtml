@@ -1,0 +1,123 @@
+﻿@model IEnumerable<PayrollViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EmployeeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competence)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeriodStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeriodEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeEntry.HoursWorked)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeEntry.DaysWorked)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeEntry.IsConsistent)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">Nenhuma folha de ponto pendente.</td>
+            </tr>
+        }
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Competence)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PeriodStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PeriodEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeEntry.HoursWorked)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeEntry.DaysWorked)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeEntry.IsConsistent)
+            </td>
+            <td>
+                <button id="process-btn" type="button" class="btn btn-outline-primary btn-sm"
+                        data-employee-id='@item.EmployeeId.ToString()'
+                        data-employee-name="@item.EmployeeName"
+                        data-competence-date="@item.Competence.ToString("yyyy-MM-dd")"
+                        data-hours-worked="@item.TimeEntry.HoursWorked"
+                        data-days-worked="@item.TimeEntry.DaysWorked"
+                        data-is-consistent="@item.TimeEntry.IsConsistent">
+                    Processar
+                </button>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="processModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="processForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Processamento forçado?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <dl class="row">
+                        <div class="d-none">
+                            <dt class="col-sm-4">Employee ID</dt>
+                            <dd class="col-sm-8" id="process-employeeId"></dd>
+                        </div>
+
+                        <dt class="col-sm-4">Funcionário</dt>
+                        <dd class="col-sm-8" id="process-employeeName"></dd>
+
+                        <dt class="col-sm-4">Competencia</dt>
+                        <dd class="col-sm-8" id="process-competenceDate"></dd>
+
+                        <dt class="col-sm-4">Horas Trabalhadas</dt>
+                        <dd class="col-sm-8" id="process-hoursWorked"></dd>
+
+                        <dt class="col-sm-4">Dias Trabalhados</dt>
+                        <dd class="col-sm-8" id="process-daysWorked"></dd>
+
+                        <dt class="col-sm-4">Consistente?</dt>
+                        <dd class="col-sm-8" id="process-isConsistent"></dd>
+
+                        <div id="process-errors" />
+
+                    </dl>
+
+                    <p>Tem certeza que deseja confirmar o processamento desta folha de pagamento?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">✔ Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

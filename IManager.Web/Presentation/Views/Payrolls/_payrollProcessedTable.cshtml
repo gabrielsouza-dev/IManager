@@ -1,0 +1,66 @@
+﻿@model IEnumerable<PayrollViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.EmployeeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Competence)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeriodStart)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeriodEnd)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeEntry.HoursWorked)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeEntry.DaysWorked)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeEntry.IsConsistent)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="10" class="text-center">Nenhuma folha ponto processada.</td>
+            </tr>
+        }
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmployeeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Competence)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PeriodStart)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PeriodEnd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeEntry.HoursWorked)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeEntry.DaysWorked)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeEntry.IsConsistent)
+            </td>
+            <td>
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
