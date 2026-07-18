@@ -1,8 +1,8 @@
 ﻿using IManager.Web.Application.Interfaces;
 using IManager.Web.Domain.Consts;
+using IManager.Web.Presentation.Requests;
 using IManager.Web.Presentation.ViewModels.TimeEntries;
 using IManager.Web.Shared;
-using IManager.Web.Shared.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

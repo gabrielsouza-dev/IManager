@@ -1,4 +1,4 @@
-﻿namespace IManager.Web.Shared.Requests;
+﻿namespace IManager.Web.Presentation.Requests;
 
 public class TimeEntryActionRequest
 {

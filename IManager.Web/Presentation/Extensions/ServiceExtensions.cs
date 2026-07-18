@@ -21,6 +21,7 @@ public static class ServiceExtensions
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<IEmailSender<User>, IdentityEmailSender>();
 
+        builder.Services.AddScoped<IPayrollQueryService, PayrollQueryService>();
         builder.Services.AddTransient<IPayrollGenerationService, PayrollGenerationService>();
     }
 }

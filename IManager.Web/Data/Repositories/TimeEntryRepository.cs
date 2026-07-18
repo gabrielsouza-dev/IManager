@@ -3,10 +3,12 @@ using IManager.Web.Data.Persistence;
 using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Enums;
 using IManager.Web.Domain.Interfaces.Repositories;
+using IManager.Web.Presentation.Requests;
 using IManager.Web.Presentation.ViewModels.Payrolls;
 using IManager.Web.Presentation.ViewModels.TimeEntries;
 using IManager.Web.Presentation.ViewModels.Users;
 using IManager.Web.Shared.Helpers;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 namespace IManager.Web.Data.Repositories;
 
@@ -239,5 +241,33 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
             .ToList();
 
         return summary;
+    }
+
+    public async Task<IEnumerable<ProcessPayrollSummary>> GetProcessPayrollSummariesAsync(Guid companyId, ProcessPayrollRequest request)
+    {
+        var start = new DateOnly(
+            request.CompetenceDate.Year,
+            request.CompetenceDate.Month,
+            1);
+        var end = start.AddMonths(1);
+          
+        var result = await _dbSet
+            .AsNoTracking()
+            .Where(t => t.Employee.CompanyId == companyId &&
+                request.EmployeeIds.Contains(t.EmployeeId) &&
+                t.Date >= start &&
+                t.Date < end &&
+                t.IsCurrent &&
+                t.Status == TimeEntryStatus.Accepted) 
+            .Select(t =>
+                    new ProcessPayrollSummary(
+                        EmployeId: t.EmployeeId,
+                        EmployeName: t.Employee.FullName,
+                        Date: t.Date,
+                        IsConcistent: t.Checks.IsConsistent(),
+                        CheckCount: t.Checks.Count)
+            ).ToListAsync();
+
+        return result;
     }
 }

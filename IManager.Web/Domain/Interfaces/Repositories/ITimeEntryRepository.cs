@@ -1,5 +1,6 @@
 ﻿using IManager.Web.Application.Services;
 using IManager.Web.Domain.Entities.TimeTrackings;
+using IManager.Web.Presentation.Requests;
 using IManager.Web.Presentation.ViewModels.Payrolls;
 using IManager.Web.Presentation.ViewModels.TimeEntries;
 
@@ -13,4 +14,5 @@ public interface ITimeEntryRepository : IRepository<TimeEntry>
     Task<IEnumerable<DateOnly>> GetPendingPayrollCompetencesAsync(Guid companyId);
     Task<IEnumerable<PayrollViewModel>> GetPendingPayrollsAsync(Guid companyId, DateOnly competenceDate);
     Task<IEnumerable<PayrollViewModel>> GetProcessedPayrollsAsync(Guid companyId, DateOnly competenceDate);
+    Task<IEnumerable<ProcessPayrollSummary>> GetProcessPayrollSummariesAsync(Guid companyId, ProcessPayrollRequest request);
 }
