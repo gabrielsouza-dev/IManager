@@ -28,5 +28,5 @@ public class TimeEntry : BaseEntity
     public bool IsConsistent => Checks.IsConsistent();
 
     [NotMapped]
-    public TimeSpan HoursWorked => Checks.GetHoursWorked();
+    public TimeSpan WorkedHours => Checks.GetHoursWorked();
 }

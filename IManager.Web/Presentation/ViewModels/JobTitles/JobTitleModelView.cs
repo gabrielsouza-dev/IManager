@@ -7,6 +7,7 @@ public class JobTitleModelView
     public bool IsHazard { get; set; } = false;
     public bool IsUnhealthy { get; set; } = false;
     public bool IsCommissioned { get; set; } = false;
+    public bool IsTimeBank { get; set; } = false;
     public TimeSpan DailyHours { get; set; } = TimeSpan.FromHours(8);
     public bool IsActive { get; set; } = false;
 }

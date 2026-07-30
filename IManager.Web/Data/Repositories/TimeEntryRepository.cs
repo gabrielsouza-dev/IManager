@@ -10,6 +10,7 @@ using IManager.Web.Presentation.ViewModels.Users;
 using IManager.Web.Shared.Helpers;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 namespace IManager.Web.Data.Repositories;
 
 public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
@@ -266,6 +267,27 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
                         Date: t.Date,
                         IsConcistent: t.Checks.IsConsistent(),
                         CheckCount: t.Checks.Count)
+            ).ToListAsync();
+
+        return result;
+    }
+
+    public async Task<List<TimeEntry>> GetTimeEntriesByCompetence(Guid companyId, Guid employeeId, DateOnly competenceDate)
+    {
+        var start = new DateOnly(
+           competenceDate.Year,
+           competenceDate.Month,
+            1);
+        var end = start.AddMonths(1);
+
+        var result = await _dbSet
+            .Where(t => t.Employee.CompanyId == companyId &&
+                t.EmployeeId == employeeId &&
+                t.Date >= start &&
+                t.Date < end &&
+                t.IsCurrent &&
+                t.Status == TimeEntryStatus.Accepted)
+            .Select(t => t
             ).ToListAsync();
 
         return result;

@@ -14,6 +14,6 @@ public static class RepositoryExtensions
         builder.Services.AddScoped<IDepartmentsRepository, DepartmentsRepository>();
         builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
         builder.Services.AddScoped<IPayrollsRepository, PayrollsRepository>();
-
+        builder.Services.AddScoped<IPayslipsRepository, PayslipsRepository>();
     }
 }

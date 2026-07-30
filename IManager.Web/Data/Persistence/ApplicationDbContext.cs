@@ -175,7 +175,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                   .HasForeignKey(e => e.ParentId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            entity.Ignore(te => te.HoursWorked);
+            entity.Ignore(te => te.WorkedHours);
 
             entity.Ignore(te => te.IsConsistent);
         });
@@ -216,8 +216,8 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.HasKey(e => e.Id);
             entity.Property(e => e.GrossSalary).HasColumnType("decimal(18,2)");
             entity.Property(e => e.OvertimeAdditionals).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.HazardPay).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.UnhealthyPay).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.HazardAdditionals).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.UnhealthyAdditionals).HasColumnType("decimal(18,2)");
             entity.Property(e => e.Commission).HasColumnType("decimal(18,2)");
             entity.Property(e => e.INSSDeduction).HasColumnType("decimal(18,2)");
             entity.Property(e => e.IRRFDeduction).HasColumnType("decimal(18,2)");

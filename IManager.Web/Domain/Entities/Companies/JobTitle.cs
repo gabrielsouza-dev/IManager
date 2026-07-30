@@ -14,5 +14,5 @@ public class JobTitle : BaseEntity
     public TimeSpan DailyHours { get; set; } = TimeSpan.FromHours(8);
 
     public ICollection<UserProfile> Employees { get; set; } = new List<UserProfile>();
-
+    public bool IsTimeBank { get; set; }
 }
