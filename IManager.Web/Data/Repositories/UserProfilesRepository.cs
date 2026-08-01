@@ -11,7 +11,7 @@ public class UserProfilesRepository : Repository<UserProfile>, IUserProfilesRepo
 
     public async Task<InfoUserProfileViewModel?> GetInfoByIdAsync(Guid id)
     {
-        var start = new DateTime(DateTime.UtcNow.Year - 1, 1, 1, 0, 0, 0,kind: DateTimeKind.Utc);
+        var start = new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 0, kind: DateTimeKind.Utc);
         var end = start.AddYears(1);
 
         var result = await _dbSet
