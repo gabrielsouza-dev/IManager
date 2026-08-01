@@ -1,4 +1,5 @@
 ﻿using IManager.Web.Application.Services;
+using IManager.Web.Domain.Entities.Companies;
 using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Entities.Users;
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PayrollViewModel>
+﻿@model IEnumerable<ProcessedPayrollViewModel>
 
 <table class="table">
     <thead>
@@ -7,60 +7,64 @@
                 @Html.DisplayNameFor(model => model.EmployeeName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Competence)
+                @Html.DisplayNameFor(model => model.EmployeeDepartment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PeriodStart)
+                @Html.DisplayNameFor(model => model.EmployeeJobtitle)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PeriodEnd)
+                @Html.DisplayNameFor(model => model.GrossSalary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEntry.HoursWorked)
+                @Html.DisplayNameFor(model => model.NetSalary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEntry.DaysWorked)
+                @Html.DisplayNameFor(model => model.RegularSalary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEntry.IsConsistent)
+                @Html.DisplayNameFor(model => model.TotalExtraEarnings)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalDeductions)
+            </th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Any())
         {
             <tr>
-                <td colspan="10" class="text-center">Nenhuma folha ponto processada.</td>
+                <td colspan="9" class="text-center">Nenhuma folha processada.</td>
             </tr>
         }
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Competence)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PeriodStart)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PeriodEnd)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEntry.HoursWorked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEntry.DaysWorked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEntry.IsConsistent)
-            </td>
-            <td>
 
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeDepartment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeJobtitle)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GrossSalary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NetSalary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RegularSalary)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalExtraEarnings)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalDeductions)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

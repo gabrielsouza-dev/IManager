@@ -27,7 +27,7 @@ public class PayrollsController : Controller
     public async Task<IActionResult> Index()
     {
         var companyId = GetCompanyId();
-        IEnumerable<DateOnly> model = await _payrollQueryService.GetPendingCompetencesAsync(companyId);
+        IEnumerable<DateOnly> model = await _payrollQueryService.GetCompetencesAsync(companyId);
 
         return View(model);
     }

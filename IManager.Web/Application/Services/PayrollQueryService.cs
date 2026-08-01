@@ -16,18 +16,20 @@ namespace IManager.Web.Application.Services;
 public class PayrollQueryService : IPayrollQueryService
 {
     private readonly ITimeEntryRepository _timeEntryRepository;
+    private readonly IPayslipsRepository _payslipRepository;
 
-    public PayrollQueryService(ITimeEntryRepository timeEntryRepository)
+    public PayrollQueryService(ITimeEntryRepository timeEntryRepository, IPayslipsRepository payslipRepository)
     {
         _timeEntryRepository = timeEntryRepository;
+        _payslipRepository = payslipRepository;
     }
 
-    public async Task<IEnumerable<DateOnly>> GetPendingCompetencesAsync(Guid companyId)
+    public async Task<IEnumerable<DateOnly>> GetCompetencesAsync(Guid companyId)
     {
         if (companyId == Guid.Empty)
             return Enumerable.Empty<DateOnly>();
 
-        var model = await _timeEntryRepository.GetPendingPayrollCompetencesAsync(companyId);
+        var model = await _timeEntryRepository.GetPayrollCompetencesAsync(companyId);
         return model ?? Enumerable.Empty<DateOnly>();
     }   
 
@@ -40,12 +42,13 @@ public class PayrollQueryService : IPayrollQueryService
         return model ?? Enumerable.Empty<PayrollViewModel>();
     }
 
-    public async Task<IEnumerable<PayrollViewModel>> GetProcessedPayrollAsync(Guid companyId, DateOnly competenceDate)
+    public async Task<IEnumerable<ProcessedPayrollViewModel>> GetProcessedPayrollAsync(Guid companyId, DateOnly competenceDate)
     {
         if (companyId == Guid.Empty)
-            return Enumerable.Empty<PayrollViewModel>();
+            return Enumerable.Empty<ProcessedPayrollViewModel>();
 
-        var model = await _timeEntryRepository.GetProcessedPayrollsAsync(companyId, competenceDate);
-        return model ?? Enumerable.Empty<PayrollViewModel>();
+        var model = await _payslipRepository.GetProcessedPayrollsAsync(companyId, competenceDate);
+        return model ?? Enumerable.Empty<ProcessedPayrollViewModel>();
     }
+
 }
