@@ -8,6 +8,8 @@ using IManager.Web.Domain.Interfaces.Repositories;
 using IManager.Web.Presentation.Requests;
 using IManager.Web.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace IManager.Web.Application.Services;
 
@@ -86,7 +88,6 @@ public class PayrollGenerationService : IPayrollGenerationService
         CalculatePayslip(payslip, userProfile);
 
         await _payslipsRepository.AddAsync(payslip);
-        userProfile.Payslips.Add(payslip);
     }
 
     private TimeSpan CalculateNightshiftHours(IEnumerable<TimeCheck> checks)

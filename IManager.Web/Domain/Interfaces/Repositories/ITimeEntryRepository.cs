@@ -11,9 +11,8 @@ public interface ITimeEntryRepository : IRepository<TimeEntry>
     Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly date);
     Task<IEnumerable<TimeEntryAudict>> GetAudictoryHistory(Guid companyId, DateOnly date);
     Task<IEnumerable<DateOnly>> GetPendentDateTimeEntry(Guid companyId);
-    Task<IEnumerable<DateOnly>> GetPendingPayrollCompetencesAsync(Guid companyId);
+    Task<IEnumerable<DateOnly>> GetPayrollCompetencesAsync(Guid companyId);
     Task<IEnumerable<PayrollViewModel>> GetPendingPayrollsAsync(Guid companyId, DateOnly competenceDate);
-    Task<IEnumerable<PayrollViewModel>> GetProcessedPayrollsAsync(Guid companyId, DateOnly competenceDate);
     Task<IEnumerable<ProcessPayrollSummary>> GetProcessPayrollSummariesAsync(Guid companyId, ProcessPayrollRequest request);
     Task<List<TimeEntry>> GetTimeEntriesByCompetence(Guid companyId, Guid employeeId, DateOnly competenceDate);
 }

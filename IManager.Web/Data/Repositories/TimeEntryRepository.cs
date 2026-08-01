@@ -163,14 +163,13 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         return summary;
     }
 
-    public async Task<IEnumerable<DateOnly>> GetPendingPayrollCompetencesAsync(Guid companyId)
+    public async Task<IEnumerable<DateOnly>> GetPayrollCompetencesAsync(Guid companyId)
     {
         var result = await _dbSet
             .AsNoTracking()
             .Where(t =>
                 t.Employee.CompanyId == companyId &&
                 t.IsCurrent == true &&
-                t.PayslipId == null &&
                 t.Status == TimeEntryStatus.Accepted)
             .GroupBy(t => new { t.Date.Year, t.Date.Month })
             .Select(g => new DateOnly(g.Key.Year, g.Key.Month, 1))
@@ -179,69 +178,6 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
             .ToListAsync();
 
         return result;
-    }
-
-    public async Task<IEnumerable<PayrollViewModel>> GetProcessedPayrollsAsync(Guid companyId, DateOnly competenceDate)
-    {
-        var result = await _dbSet
-            .AsNoTracking()
-            .Where(t =>
-                t.Employee.CompanyId == companyId &&
-                t.IsCurrent == true &&
-                t.PayslipId != null &&
-                t.Status == TimeEntryStatus.Accepted &&
-                t.Date.Month == competenceDate.Month &&
-                t.Date.Year == competenceDate.Year)
-            .Select(g => new
-            {
-                CompanyId = g.Employee.CompanyId,
-                EmployeeId = g.EmployeeId,
-                EmployeeName = g.Employee.FullName,
-                CompanyName = g.Employee.Company.TradeName,
-                Competence = new DateOnly(g.Date.Year, g.Date.Month, 1),
-                PeriodStart = new DateOnly(g.Date.Year, g.Date.Month, 1),
-                PeriodEnd = new DateOnly(g.Date.Year, g.Date.Month, DateTime.DaysInMonth(g.Date.Year, g.Date.Month)),
-                TimeEntry = new TimeEntrySummaryViewModel()
-                {
-                    Id = g.Id,
-                    IsConsistent = g.Checks.IsConsistent(),
-                    HoursWorked = g.Checks.GetHoursWorked(),
-                }
-            })
-            .ToListAsync();
-
-        var summary = result
-            .GroupBy(r => r.EmployeeId)
-            .Select(g =>
-            {
-                var first = g.First();
-
-                return new PayrollViewModel()
-                {
-                    CompanyId = first.CompanyId,
-                    CompanyName = first.CompanyName,
-
-                    EmployeeId = g.Key,
-                    EmployeeName = first.EmployeeName,
-
-                    Competence = first.Competence,
-                    PeriodStart = first.PeriodStart,
-                    PeriodEnd = first.PeriodEnd,
-
-                    TimeEntry = new TimeEntrySummaryViewModel
-                    {
-                        Id = first.TimeEntry.Id,
-                        DaysWorked = g.Count(),
-                        HoursWorked = TimeSpan.FromTicks(
-                            g.Sum(x => x.TimeEntry.HoursWorked.Ticks)),
-
-                        IsConsistent = g.All(x => x.TimeEntry.IsConsistent)
-                    }
-                };
-            })
-            .ToList();
-
-        return summary;
     }
 
     public async Task<IEnumerable<ProcessPayrollSummary>> GetProcessPayrollSummariesAsync(Guid companyId, ProcessPayrollRequest request)
@@ -281,6 +217,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var end = start.AddMonths(1);
 
         var result = await _dbSet
+            .Include(t => t.Checks)
             .Where(t => t.Employee.CompanyId == companyId &&
                 t.EmployeeId == employeeId &&
                 t.Date >= start &&
