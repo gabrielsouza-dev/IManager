@@ -11,8 +11,7 @@ public class UserProfilesRepository : Repository<UserProfile>, IUserProfilesRepo
 
     public async Task<InfoUserProfileViewModel?> GetInfoByIdAsync(Guid id)
     {
-        var start = new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 0, kind: DateTimeKind.Utc);
-        var end = start.AddYears(1);
+        var year = DateTime.UtcNow.Year;
 
         var result = await _dbSet
             .Where(u => u.Id == id)
@@ -22,22 +21,24 @@ public class UserProfilesRepository : Repository<UserProfile>, IUserProfilesRepo
                 Department = u.JobTitle.Department.Name,
                 CompanyTradeName = u.Company.TradeName,
                 CompanyDocumentNumber = u.Company.DocumentNumber,
+
                 LastAnnualNetSalary = u.Payslips
-                    .Where(p => p.CreatedAt >= start && p.CreatedAt < end)
+                    .Where(p => p.Payroll.Competence.Year == year)
                     .Sum(p => (decimal?)p.NetSalary) ?? 0,
 
                 LastAnnualGrossSalary = u.Payslips
-                    .Where(p => p.CreatedAt >= start && p.CreatedAt < end)
+                    .Where(p => p.Payroll.Competence.Year == year)
                     .Sum(p => (decimal?)p.GrossSalary) ?? 0,
 
                 AverageNetSalary = u.Payslips
-                    .Where(p => p.CreatedAt >= start && p.CreatedAt < end)
+                    .Where(p => p.Payroll.Competence.Year == year)
                     .Average(p => (decimal?)p.NetSalary) ?? 0,
 
                 AverageGrossSalary = u.Payslips
-                    .Where(p => p.CreatedAt >= start && p.CreatedAt < end)
+                    .Where(p => p.Payroll.Competence.Year == year)
                     .Average(p => (decimal?)p.GrossSalary) ?? 0
-            }).FirstOrDefaultAsync();
+            })
+            .FirstOrDefaultAsync();
 
         return result;
     }

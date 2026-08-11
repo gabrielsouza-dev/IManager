@@ -214,24 +214,53 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         modelBuilder.Entity<Payslip>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.GrossSalary).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.OvertimeAdditionals).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.HazardAdditionals).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.UnhealthyAdditionals).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.Commission).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.INSSDeduction).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.IRRFDeduction).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.OtherDeductions).HasColumnType("decimal(18,2)");
+
+            // Valores salariais
+            entity.Property(e => e.GrossSalary)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.RegularSalary)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.TotalExtraEarnings)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.TotalDeductions)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.NetSalary)
+                .HasPrecision(18, 2);
+
+            // Adicionais
+            entity.Property(e => e.OvertimeAdditionals)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.HazardAdditionals)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.UnhealthyAdditionals)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.NightShiftAdditionals)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.Commission)
+                .HasPrecision(18, 2);
+
+            // Descontos
+            entity.Property(e => e.INSSDeduction)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.IRRFDeduction)
+                .HasPrecision(18, 2);
+
+            entity.Property(e => e.OtherDeductions)
+                .HasPrecision(18, 2);
 
             entity.HasMany(e => e.TimeEntries)
-                  .WithOne(t => t.Payslip)
-                  .HasForeignKey(t => t.PayslipId)
-                  .OnDelete(DeleteBehavior.SetNull);
-
-            // propriedades calculadas são ignoradas pelo EF
-            //entity.Ignore(e => e.TotalEarnings);
-            //entity.Ignore(e => e.TotalDeductions);
-            //entity.Ignore(e => e.NetSalary);
+                .WithOne(t => t.Payslip)
+                .HasForeignKey(t => t.PayslipId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
     #endregion

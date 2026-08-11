@@ -42,7 +42,7 @@ public sealed class UserSeeder : IEntitySeeder<UserSeedData>
                     $"Falha ao criar usuario {item.Email}, role {item.Role} não existe."
                 );
 
-            var userId = Guid.NewGuid();
+            var userId = item.Id;
 
             var profile = _mapper.Map<UserProfile>(item);
             profile.Id = userId;

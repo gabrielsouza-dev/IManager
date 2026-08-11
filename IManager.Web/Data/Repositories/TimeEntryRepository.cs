@@ -1,5 +1,6 @@
 ﻿using IManager.Web.Application.Services;
 using IManager.Web.Data.Persistence;
+using IManager.Web.Domain.Consts;
 using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Enums;
 using IManager.Web.Domain.Interfaces.Repositories;
@@ -22,6 +23,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         return await _dbSet
             .Where(t => 
                 t.Employee.CompanyId == companyId && 
+                t.Employee.Role == Role.User &&
                 t.ParentId != null && 
                 t.Status != TimeEntryStatus.Pending &&
                 t.Date.Month == date.Month &&
@@ -47,6 +49,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var result = await _dbSet
             .Where(t =>
                 t.Employee.CompanyId == companyId &&
+                t.Employee.Role == Role.User &&
                 t.ParentId != null)
             .Select(t => new
             {
@@ -67,8 +70,9 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var result = await _dbSet
             .AsNoTracking()
             .Where(t => 
-                (t.Employee.CompanyId == companyId) && 
+                (t.Employee.CompanyId == companyId) &&
                 (t.Status == TimeEntryStatus.Pending) && 
+                t.Employee.Role == Role.User &&
                 t.Date.Month == competenceDate.Month && 
                 t.Date.Year == competenceDate.Year)
             .Select(t => new TimeEntryPending()
@@ -106,7 +110,8 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var result = await _dbSet
             .AsNoTracking()
             .Where(t => 
-                t.Employee.CompanyId == companyId && 
+                t.Employee.CompanyId == companyId &&
+                t.Employee.Role == Role.User &&
                 t.IsCurrent == true && 
                 t.PayslipId == null &&
                 t.Status == TimeEntryStatus.Accepted &&
@@ -169,15 +174,20 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
             .AsNoTracking()
             .Where(t =>
                 t.Employee.CompanyId == companyId &&
-                t.IsCurrent == true &&
+                t.IsCurrent &&
                 t.Status == TimeEntryStatus.Accepted)
-            .GroupBy(t => new { t.Date.Year, t.Date.Month })
-            .Select(g => new DateOnly(g.Key.Year, g.Key.Month, 1))
+            .Select(t => new
+            {
+                t.Date.Year,
+                t.Date.Month
+            })
+            .Distinct()
             .OrderByDescending(x => x.Year)
             .ThenByDescending(x => x.Month)
             .ToListAsync();
 
-        return result;
+        return result.Select(x =>
+            new DateOnly(x.Year, x.Month, 1));
     }
 
     public async Task<IEnumerable<ProcessPayrollSummary>> GetProcessPayrollSummariesAsync(Guid companyId, ProcessPayrollRequest request)
@@ -191,6 +201,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var result = await _dbSet
             .AsNoTracking()
             .Where(t => t.Employee.CompanyId == companyId &&
+                t.Employee.Role == Role.User &&
                 request.EmployeeIds.Contains(t.EmployeeId) &&
                 t.Date >= start &&
                 t.Date < end &&
@@ -219,6 +230,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
         var result = await _dbSet
             .Include(t => t.Checks)
             .Where(t => t.Employee.CompanyId == companyId &&
+                t.Employee.Role == Role.User &&
                 t.EmployeeId == employeeId &&
                 t.Date >= start &&
                 t.Date < end &&

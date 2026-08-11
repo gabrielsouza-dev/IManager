@@ -33,14 +33,138 @@ public static class DemoSeedBuilder
         var departments = BuildDepartments(companyId);
         var jobTitles = BuildJobTitles(departments);
         var users = BuildUsers(companyId, jobTitles, fantasyName);
+        var entries = BuildTimeEntries(users);
 
         return new DemoSeedData
         {
             Company = company,
             Departments = departments,
             JobTitles = jobTitles,
-            Users = users
+            Users = users,
+            Entries = entries,
         };
+    }
+
+    private static List<TimeEntrySeedData> BuildTimeEntries(
+     List<UserSeedData> users)
+    {
+        if (users.Count == 0)
+            return [];
+
+        var timeZone = TimeZoneInfo.Local;
+        var utilDays = GetUtilDaysFromLastYears(2);
+
+        var entries = new List<TimeEntrySeedData>(
+            users.Count * utilDays.Count
+        );
+
+        foreach (var user in users)
+        {
+            foreach (var day in utilDays)
+            {
+                var entry = new TimeEntrySeedData
+                {
+                    EmployeeId = user.Id,
+                    Date = day,
+                    Checks = []
+                };
+
+                foreach (var time in GenerateWorkDayChecks())
+                {
+                    entry.Checks.Add(
+                        CreateTimeCheck(
+                            entry.Id,
+                            day,
+                            time,
+                            timeZone
+                        )
+                    );
+                }
+
+                entries.Add(entry);
+            }
+        }
+
+        return entries;
+    }
+
+    private static TimeCheckSeedData CreateTimeCheck(
+        Guid timeEntryId,
+        DateOnly date,
+        TimeOnly time,
+        TimeZoneInfo timeZone)
+    {
+        // O horário ainda representa "hora local",
+        // portanto não atribuímos Local/Utc ao DateTime.
+        var localDateTime = date.ToDateTime(
+            time,
+            DateTimeKind.Unspecified
+        );
+
+        // Agora convertemos explicitamente:
+        // horário local do timezone -> UTC.
+        var utcDateTime = TimeZoneInfo.ConvertTimeToUtc(
+            localDateTime,
+            timeZone
+        );
+
+        return new TimeCheckSeedData
+        {
+            TimeEntryId = timeEntryId,
+            Timestamp = utcDateTime,
+            TimeZoneId = timeZone.Id
+        };
+    }
+
+    private static TimeOnly[] GenerateWorkDayChecks()
+    {
+        return
+        [
+            GenerateRandomTime(9),
+        GenerateRandomTime(12),
+        GenerateRandomTime(13),
+        GenerateRandomTime(18)
+        ];
+    }
+
+    private static TimeOnly GenerateRandomTime(int hour)
+    {
+        const int toleranceMinutes = 15;
+
+        var randomMinutes = RandomNumberGenerator.GetInt32(
+            -toleranceMinutes,
+            toleranceMinutes + 1
+        );
+
+        return new TimeOnly(hour, 0)
+            .AddMinutes(randomMinutes);
+    }
+
+    private static List<DateOnly> GetUtilDaysFromLastYears(int years)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var startDate = today.AddYears(-years);
+
+        var days = new List<DateOnly>();
+
+        for (
+            var date = startDate;
+            date <= today;
+            date = date.AddDays(1)
+        )
+        {
+            if (IsUtilDay(date))
+                days.Add(date);
+        }
+
+        return days;
+    }
+
+    private static bool IsUtilDay(DateOnly date)
+    {
+        return date.DayOfWeek is
+            >= DayOfWeek.Monday and
+            <= DayOfWeek.Friday;
     }
 
     private static List<DepartmentSeedData> BuildDepartments(Guid companyId)
@@ -110,7 +234,7 @@ public static class DemoSeedBuilder
             users.Add(new UserSeedData(
                 Guid.NewGuid(),
                 email,
-                GeneratePassword(),
+                "User@123",
                 Role.User,
                 $"{first} {last}",
                 GenerateCpf(),

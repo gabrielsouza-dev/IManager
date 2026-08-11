@@ -4,7 +4,7 @@ namespace IManager.Web.Domain.Entities.Payrolls;
 
 public class Payroll : BaseEntity
 {
-    public Guid CompanyId { get; set; } = Guid.NewGuid();
+    public Guid CompanyId { get; set; }
     public Company Company { get; set; } = null!;
 
     public DateOnly Competence { get; set; }

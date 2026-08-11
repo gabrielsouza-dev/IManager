@@ -30,6 +30,8 @@ public class MappingProfile : Profile
         CreateMap<CompanySeedData, Company>().ReverseMap();
         CreateMap<DepartmentSeedData, Department>().ReverseMap();
         CreateMap<JobTitleSeedData, JobTitle>().ReverseMap();
+        CreateMap<TimeEntrySeedData, TimeEntry>().ReverseMap();
+        CreateMap<TimeCheckSeedData, TimeCheck>().ReverseMap();
     }
 
     private void MapUser()

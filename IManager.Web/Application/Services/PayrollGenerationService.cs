@@ -7,6 +7,7 @@ using IManager.Web.Domain.Interfaces.Persistence;
 using IManager.Web.Domain.Interfaces.Repositories;
 using IManager.Web.Presentation.Requests;
 using IManager.Web.Shared;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -71,8 +72,7 @@ public class PayrollGenerationService : IPayrollGenerationService
     private async Task ProcessEmployee(Guid companyId, Guid employeeId, Payroll payroll, ProcessPayrollRequest request)
     {
         var userProfile = await GetUserById(employeeId);
-        if (userProfile == null || userProfile.Role != Role.User)
-            throw new ArgumentException("O perfil do usuário é inválido.", nameof(userProfile));
+        if (userProfile == null || userProfile.Role != Role.User) return;
 
         var timeentries = await _timeEntryRepository.GetTimeEntriesByCompetence(companyId, employeeId, request.CompetenceDate);
         if (timeentries.Count() == 0)
@@ -175,8 +175,10 @@ public class PayrollGenerationService : IPayrollGenerationService
             payslip.NightShiftHours += CalculateNightshiftHours(timeEntry.Checks);
         }
 
-        //TODO: Implementar quais dias o Jobtitle trabalha, para calcular o salário por hora corretamente.
-        var salaryByDay = (userProfile.BaseSalary / 30 /*quantidade de dias a trabalhar*/ );
+        // TODO: Calcular dias trabalhados conforme escala do cargo e competência.
+        const int workingDays = 21;
+
+        var salaryByDay = (userProfile.BaseSalary / workingDays /*quantidade de dias a trabalhar*/ );
         var salaryByHour = (salaryByDay / (decimal)userProfile.JobTitle.DailyHours.TotalHours);
 
         payslip.RegularSalary = (decimal)payslip.RegularHours.TotalHours * salaryByHour;

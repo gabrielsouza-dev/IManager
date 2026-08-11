@@ -5,4 +5,5 @@ public class DemoSeedData
     public IEnumerable<DepartmentSeedData> Departments { get; set; } = [];
     public IEnumerable<JobTitleSeedData> JobTitles { get; set; } = [];
     public IEnumerable<UserSeedData> Users { get; set; } = [];
+    public IEnumerable<TimeEntrySeedData> Entries { get; set; } = [];
 }

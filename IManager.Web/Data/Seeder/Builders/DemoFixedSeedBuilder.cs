@@ -23,9 +23,7 @@ public static class DemoFixedSeedBuilder
 
         var users = new[]
         {
-            CreateUser(options.Users.Admin, Role.Admin, companyId, jobTitle.Id),
-            CreateUser(options.Users.Staff, Role.Staff, companyId, jobTitle.Id),
-            CreateUser(options.Users.User, Role.User, companyId, jobTitle.Id)
+            CreateUser(options.Users.Staff, Role.Staff, companyId, jobTitle.Id)
         };
 
         return new DemoSeedData
@@ -33,7 +31,8 @@ public static class DemoFixedSeedBuilder
             Company = company,
             Departments = new[] { department },
             JobTitles = new[] { jobTitle },
-            Users = users
+            Users = users,
+            Entries = Array.Empty<TimeEntrySeedData>()
         };
     }
 

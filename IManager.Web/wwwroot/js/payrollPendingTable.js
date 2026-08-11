@@ -1,4 +1,5 @@
 ﻿let processModel;
+let processBtn;
 
 const getProcessModal = () => {
     if (!processModel) {
@@ -23,14 +24,30 @@ document.addEventListener('click', async (e) => {
 
     const employeeId = btn.dataset.employeeId;
     const competenceDate = btn.dataset.competenceDate;
+
     try {
-        var response = await processPayroll(employeeId, competenceDate, false);
+        const response = await processPayroll(
+            employeeId,
+            competenceDate,
+            false
+        );
 
         if (!response.ok) {
             const errorData = await response.json();
 
+            processBtn = btn;
+
             showProcessModal(btn, errorData.errors);
+            return;
         }
+
+        sessionStorage.setItem(
+            'payrollCompetenceDate',
+            competenceDate
+        );
+
+        window.location.reload();
+
     } catch (e) {
         console.error(e);
         alert('Erro de comunicação com o servidor.');
@@ -47,20 +64,48 @@ document.addEventListener('submit', async (e) => {
 
     const btn = form.querySelector('button[type="submit"]');
 
-    const employeeId = document.getElementById('process-employeeId').textContent;
-    const conpetenceDate = document.getElementById('process-competenceDate').textContent;
+    const employeeId =
+        document.getElementById('process-employeeId').textContent;
+
+    const conpetenceDate =
+        document.getElementById('process-competenceDate').textContent;
 
     btn.disabled = true;
 
     try {
-        await processPayroll(employeeId, conpetenceDate, true);
+        const response = await processPayroll(
+            employeeId,
+            conpetenceDate,
+            true
+        );
+
+        if (!response.ok) {
+            const errorData = await response.json();
+
+            document.getElementById('process-errors').innerHTML =
+                `<ul>${errorData.errors
+                    ?.map(e => `<li>${e}</li>`)
+                    .join("") ?? ""
+                }</ul>`;
+
+            return;
+        }
+
+        processBtn = null;
 
         const modal = getProcessModal();
 
         if (modal) {
             modal.hide();
-            window.location.reload();
         }
+
+        sessionStorage.setItem(
+            'payrollCompetenceDate',
+            conpetenceDate
+        );
+
+        window.location.reload();
+
     } catch (err) {
         console.error(err);
         alert('Erro de comunicação com o servidor.');
@@ -72,24 +117,40 @@ document.addEventListener('submit', async (e) => {
 const processPayroll = async (employeeId, competenceDate, isForced) => {
     const response = await fetch('/Payrolls/Process', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-            employeeIds: [ employeeId ],
+            employeeIds: [employeeId],
             competenceDate: competenceDate,
             isForced: isForced
         })
     });
 
     return response;
-}
+};
 
 const showProcessModal = (btn, errors) => {
-    document.getElementById('process-employeeId').textContent = btn.dataset.employeeId;
-    document.getElementById('process-employeeName').textContent = btn.dataset.employeeName;
-    document.getElementById('process-competenceDate').textContent = btn.dataset.competenceDate;
-    document.getElementById('process-hoursWorked').textContent = btn.dataset.hoursWorked;
-    document.getElementById('process-daysWorked').textContent = btn.dataset.daysWorked;
-    document.getElementById('process-isConsistent').textContent = btn.dataset.isConsistent;
+    document.getElementById('process-employeeId').textContent =
+        btn.dataset.employeeId;
+
+    document.getElementById('process-employeeName').textContent =
+        btn.dataset.employeeName;
+
+    document.getElementById('process-competenceDate').textContent =
+        btn.dataset.competenceDate;
+
+    document.getElementById('process-hoursWorked').textContent =
+        btn.dataset.hoursWorked;
+
+    document.getElementById('process-daysWorked').textContent =
+        btn.dataset.daysWorked;
+
+    document.getElementById('process-isConsistent').textContent =
+        btn.dataset.isConsistent;
+
+    document.getElementById('process-errors').innerHTML = '';
+
     if (errors && errors.length > 0) {
         document.getElementById('process-errors').innerHTML =
             `<ul>${errors.map(e => `<li>${e}</li>`).join("")}</ul>`;

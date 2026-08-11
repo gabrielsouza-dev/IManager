@@ -45,7 +45,9 @@
                 <td>@timeEntry.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
 
                 <td>
-                    <button id="approve-btn" type="button" class="btn btn-outline-primary btn-sm"
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm time-entry-action"
+                            data-action="approve"
                             data-bs-toggle="modal"
                             data-bs-target="#approveModal"
                             data-id="@timeEntry.Id"
@@ -60,7 +62,9 @@
                 </td>
 
                 <td>
-                    <button id="reject-btn" type="button" class="btn btn-outline-danger btn-sm"
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm time-entry-action"
+                            data-action="reject"
                             data-bs-toggle="modal"
                             data-bs-target="#rejectModal"
                             data-id="@timeEntry.Id"
