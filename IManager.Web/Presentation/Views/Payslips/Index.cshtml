@@ -1,101 +1,107 @@
-﻿@model IEnumerable<IManager.Web.Domain.Entities.Payrolls.Payslip>
+﻿@model IEnumerable<IndexPayslipViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Holerites";
 }
 
-<h1>Index</h1>
+<h1>Holerites</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Payroll)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GrossSalary)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OvertimeAdditionals)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HazardAdditionals)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UnhealthyAdditionals)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Commission)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.INSSDeduction)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IRRFDeduction)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OtherDeductions)
+                @Html.DisplayNameFor(model => model.CompetenceDate)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastModified)
-            </th>
             <th></th>
         </tr>
     </thead>
+
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Payroll.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Employee.DocumentNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GrossSalary)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OvertimeAdditionals)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.HazardAdditionals)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UnhealthyAdditionals)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Commission)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.INSSDeduction)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IRRFDeduction)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OtherDeductions)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastModified)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var modelItem in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => modelItem.CompetenceDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => modelItem.CreatedAt)
+                </td>
+                <td>
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#payslipModal"
+                            data-payslip-id="@modelItem.Id">
+                        Visualizar
+                    </button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div class="modal fade"
+     id="payslipModal"
+     tabindex="-1"
+     aria-labelledby="payslipModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="payslipModalLabel">
+                    Visualizar holerite
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Fechar">
+                </button>
+            </div>
+
+            <div class="modal-body p-0">
+                <iframe id="payslipPdf"
+                        style="width: 100%; height: 75vh; border: none;">
+                </iframe>
+            </div>
+
+            <div class="modal-footer">
+                <a id="downloadPayslip"
+                   class="btn btn-primary">
+                    Download
+                </a>
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Fechar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const payslipModal = document.getElementById('payslipModal');
+
+    payslipModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget;
+        const payslipId = button.getAttribute('data-payslip-id');
+
+        const pdfUrl = '@Url.Action("VisualizePdf")' + '?id=' + payslipId;
+        const downloadUrl = '@Url.Action("DownloadPdf")' + '?id=' + payslipId;
+
+        document.getElementById('payslipPdf').src = pdfUrl;
+        document.getElementById('downloadPayslip').href = downloadUrl;
+    });
+
+    payslipModal.addEventListener('hidden.bs.modal', () => {
+        document.getElementById('payslipPdf').src = '';
+    });
+</script>

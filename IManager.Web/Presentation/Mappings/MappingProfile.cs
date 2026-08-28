@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using IManager.Web.Data.Seeder.SeedDatas;
 using IManager.Web.Domain.Entities.Companies;
+using IManager.Web.Domain.Entities.Payrolls;
 using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Entities.Users;
 using IManager.Web.Presentation.ViewModels.Account;
 using IManager.Web.Presentation.ViewModels.Companies;
 using IManager.Web.Presentation.ViewModels.Departments;
 using IManager.Web.Presentation.ViewModels.JobTitles;
+using IManager.Web.Presentation.ViewModels.Payslips;
 using IManager.Web.Presentation.ViewModels.Users;
 using IManager.Web.Shared.DTO.TimeTrackings;
 
@@ -22,6 +24,7 @@ public class MappingProfile : Profile
         MapDepartment();
         MapJobtitle();
         MapTimeTracking();
+        MapPayslip();
     }
 
     private void MapSeeders()
@@ -97,5 +100,10 @@ public class MappingProfile : Profile
         CreateMap<TimeEntry, TimeEntryDTO>().ReverseMap();
         CreateMap<TimeCheck, TimeCheckDTO>()
             .ReverseMap();
+    }
+
+    private void MapPayslip()
+    {
+        CreateMap<Payslip, PayslipViewModel>().ReverseMap();
     }
 }

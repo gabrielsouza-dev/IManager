@@ -3,10 +3,13 @@ using IManager.Web.Presentation.Mappings;
 using IManager.Web.Presentation.Middlewares;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
+using QuestPDF.Infrastructure;
 using Serilog;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddControllersWithViews(options =>
 {

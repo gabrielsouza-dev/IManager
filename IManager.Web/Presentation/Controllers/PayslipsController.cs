@@ -1,138 +1,67 @@
-﻿using IManager.Web.Data.Persistence;
+﻿using IManager.Web.Application.Interfaces;
 using IManager.Web.Domain.Consts;
-using IManager.Web.Domain.Entities.Payrolls;
-using IManager.Web.Domain.Interfaces.Repositories;
+using IManager.Web.Shared.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
+using System.Security.Claims;
 
 namespace IManager.Web.Presentation.Controllers;
 
-//TODO: Implementar a visualização de holerite
 [Authorize(Roles = Role.User)]
 public class PayslipsController : Controller
 {
-    private readonly IRepository<Payslip> _payslipRepository;
+    private readonly IPayslipService _payslipService;
 
-    public PayslipsController(IRepository<Payslip> payslipRepository)
+    public PayslipsController(IPayslipService payslipService)
     {
-        this._payslipRepository = payslipRepository;
+        _payslipService = payslipService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var model = await _payslipRepository.GetAllAsync(q => q
-                                                .Include(p => p.Employee)
-                                                .Include(p => p.Payroll));
+        var userId = GetUserId();
+
+        var model = await _payslipService.GetPayslipByUserAsync(userId);
         return View(model);
     }
 
-    // GET: Payslips/Details/5
-    public async Task<IActionResult> Details(Guid? id)
+    [HttpGet]
+    public async Task<IActionResult> VisualizePdf(Guid id)
     {
-        if (id == null) return NotFound();
+        var userId = GetUserId();
+        var payslip = await _payslipService.GetByIdAsync(userId, id);
 
-        var payslip = await _payslipRepository.GetByIdAsync(id.Value, q => q
-                                                .Include(p => p.Employee)
-                                                .Include(p => p.Payroll));
-        if (payslip == null) return NotFound();
+        if (payslip is null)
+            return NotFound();
 
-        return View(payslip);
+        var document = new PayslipDocument(payslip);
+
+        byte[] pdf = document.GeneratePdf();
+
+        return File(pdf, "application/pdf");
     }
 
-    // GET: Payslips/Create
-    public IActionResult Create()
+    [HttpGet]
+    public async Task<IActionResult> DownloadPdf(Guid id)
     {
-        return View();
+        var userId = GetUserId();
+        var payslip = await _payslipService.GetByIdAsync(userId, id);
+
+        if (payslip is null)
+            return NotFound();
+
+        var document = new PayslipDocument(payslip);
+
+        byte[] pdf = document.GeneratePdf();
+
+        return File(
+            pdf,
+            "application/pdf",
+            $"holerite-{payslip.EmployeeName.Split(' ')[0].ToLower()}-{payslip.ReferenceMonth.ToString()}-{payslip.ReferenceYear}.pdf"
+        );
     }
 
-    // POST: Payslips/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("PayrollId,EmployeeId,GrossSalary,OvertimeAdditionals,HazardPay,UnhealthyPay,Commission,INSSDeduction,IRRFDeduction,OtherDeductions,Id,CreatedAt,LastModified")] Payslip payslip)
-    {
-        if (ModelState.IsValid)
-        {
-            await _payslipRepository.AddAsync(payslip);
-            return RedirectToAction(nameof(Index));
-        }
-
-        return View(payslip);
-    }
-
-    // GET: Payslips/Edit/5
-    public async Task<IActionResult> Edit(Guid? id)
-    {
-        if (id == null) return NotFound();
-
-        var payslip = await _payslipRepository.GetByIdAsync(id.Value);
-        if (payslip == null) return NotFound();
-
-        return View(payslip);
-    }
-
-    // POST: Payslips/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Guid id, [Bind("PayrollId,EmployeeId,GrossSalary,OvertimeAdditionals,HazardPay,UnhealthyPay,Commission,INSSDeduction,IRRFDeduction,OtherDeductions,Id,CreatedAt,LastModified")] Payslip payslip)
-    {
-        if (id != payslip.Id) return NotFound();
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                await _payslipRepository.UpdateAsync(payslip);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await PayslipExistsAsync(payslip.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        return View(payslip);
-    }
-
-    // GET: Payslips/Delete/5
-    public async Task<IActionResult> Delete(Guid? id)
-    {
-        if (id == null) return NotFound();
-
-        var payslip = await _payslipRepository.GetByIdAsync(id.Value, q => q
-                                                .Include(p => p.Employee)
-                                                .Include(p => p.Payroll));
-        if (payslip == null) return NotFound();
-
-        return View(payslip);
-    }
-
-    // POST: Payslips/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(Guid id)
-    {
-        var payslip = await _payslipRepository.GetByIdAsync(id);
-        if (payslip != null) 
-            await _payslipRepository.SoftDeleteAsync(payslip);
-
-        return RedirectToAction(nameof(Index));
-    }
-
-    private async Task<bool> PayslipExistsAsync(Guid id)
-    {
-        return await _payslipRepository.ExistsAsync(p => p.Id == id);
-    }
+    private Guid GetUserId() =>
+        Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 }

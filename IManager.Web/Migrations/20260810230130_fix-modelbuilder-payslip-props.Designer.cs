@@ -13,7 +13,9 @@ namespace IManager.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260810230130_fix-modelbuilder-payslip-props")]
+#pragma warning disable CS8981 // O nome do tipo contém apenas caracteres ascii em caixa baixa. Esses nomes podem ficar reservados para o idioma.
     partial class fixmodelbuilderpayslipprops
+#pragma warning restore CS8981 // O nome do tipo contém apenas caracteres ascii em caixa baixa. Esses nomes podem ficar reservados para o idioma.
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
