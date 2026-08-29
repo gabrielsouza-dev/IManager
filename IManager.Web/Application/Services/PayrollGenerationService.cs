@@ -7,10 +7,7 @@ using IManager.Web.Domain.Interfaces.Persistence;
 using IManager.Web.Domain.Interfaces.Repositories;
 using IManager.Web.Presentation.Requests;
 using IManager.Web.Shared;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace IManager.Web.Application.Services;
 
@@ -63,6 +60,7 @@ public class PayrollGenerationService : IPayrollGenerationService
                 ex,
                 "Erro ao processar a folha de pagamento, competência {CompetenceDate}",
                 request.CompetenceDate);
+
             return Result.Fail($"Ocorreu um erro ao processar a folha de pagamento.");
         }
 

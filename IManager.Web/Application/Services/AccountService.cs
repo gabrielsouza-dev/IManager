@@ -23,10 +23,12 @@ public class AccountService : IAccountService
     private readonly IMapper _mapper;
     private readonly IUserProfilesRepository _userProfileRepository;
     private readonly IJobTitlesRepository _jobTitleRepository;
+    private readonly ILogger<AccountService> _logger;
 
     public AccountService(SignInManager<User> signInManager, UserManager<User> userManager, 
         IUnitOfWork unitOfWork, IEmailSender<User> emailSender, IMapper mapper, 
-        IUserProfilesRepository userProfileRepository, IJobTitlesRepository jobTitleRepository)
+        IUserProfilesRepository userProfileRepository, IJobTitlesRepository jobTitleRepository,
+        ILogger<AccountService> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -35,7 +37,9 @@ public class AccountService : IAccountService
         _mapper = mapper;
         _userProfileRepository = userProfileRepository;
         _jobTitleRepository = jobTitleRepository;
+        _logger = logger;
     }
+
 
     #region Registro e Confirmação de E-mail
 
@@ -79,8 +83,9 @@ public class AccountService : IAccountService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
             await _unitOfWork.RollbackAsync();
+            _logger.LogError(ex, "Erro ao criar conta para o usuário {Email}", model.Email);
+
             return Result.Fail("Erro ao criar conta. Tente novamente.");
         }
     }
@@ -263,7 +268,9 @@ public class AccountService : IAccountService
         catch (Exception ex)
         {
             await _unitOfWork.RollbackAsync();
-            return Result.Fail(ex.Message);
+            _logger.LogError(ex, "Erro ao editar conta para o usuário {Email}", model.Email);
+
+            return Result.Fail("Erro ao editar conta. Tente novamente.");
         }
     }
     #endregion
@@ -298,9 +305,11 @@ public class AccountService : IAccountService
 
             await _unitOfWork.CommitAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             await _unitOfWork.RollbackAsync();
+            _logger.LogError(ex, "Erro ao deletar usuário {Id}", id);
+
             return Result.Fail("Falha ao atualizar Usuario. Por favor tente novamente.");
         }
         return Result.Ok();

@@ -19,12 +19,14 @@ public class CompanyService : ICompanyService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly ICompaniesRepository _companyRepository;
+    private readonly ILogger<CompanyService> _logger;
 
-    public CompanyService(IUnitOfWork unitOfWork, IMapper mapper, ICompaniesRepository companyRepository)
+    public CompanyService(IUnitOfWork unitOfWork, IMapper mapper, ICompaniesRepository companyRepository, ILogger<CompanyService> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _companyRepository = companyRepository;
+        _logger = logger;
     }
 
     public async Task<Result> CreateAsync(CreateCompanyViewModel company)
@@ -41,6 +43,8 @@ public class CompanyService : ICompanyService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao criar empresa {DocumentNumber}", company.DocumentNumber);
+
             return Result.Fail("Não foi possivel cadastrar empresa. Por favor, tente novamente.");
         }
 
@@ -58,8 +62,10 @@ public class CompanyService : ICompanyService
         {
             await _companyRepository.SoftDeleteAsync(id);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao deletar empresa {Id}", id);
+
             return Result.Fail("Falha ao atualizar Empresa. Por favor, tente novamente.");
         }
 
@@ -163,8 +169,10 @@ public class CompanyService : ICompanyService
             _mapper.Map(company, entity);
             await _companyRepository.UpdateAsync(entity!);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao atualizar empresa {Id}", id);
+
             return Result.Fail("Falha ao atualizar a Empresa. Por favor, tente novamente.");
         }
         return Result.Ok();

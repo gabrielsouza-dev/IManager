@@ -36,7 +36,8 @@ public class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Falha ao enviar e-mail para {Email}", toEmail);
+            _logger.LogError(ex, "Falha ao enviar e-mail para {toEmail}", toEmail);
+
             throw;
         }
     }

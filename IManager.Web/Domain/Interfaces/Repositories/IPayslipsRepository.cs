@@ -7,7 +7,7 @@ namespace IManager.Web.Domain.Interfaces.Repositories;
 public interface IPayslipsRepository : IRepository<Payslip>
 {
     Task<IEnumerable<IndexPayslipViewModel>> GetPayslipsByUserIdAsync(Guid userId);
-    Task<PayslipViewModel> GetPayslipViewModelAsync(Guid payslipId);
+    Task<PayslipViewModel?> GetPayslipViewModelAsync(Guid payslipId);
     Task<IEnumerable<ProcessedPayrollViewModel>> GetProcessedPayrollsAsync(Guid companyId, DateOnly competenceDate);
 
 }

@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
 using IManager.Web.Application.Interfaces;
-using IManager.Web.Data.Repositories;
 using IManager.Web.Domain.Entities.Companies;
 using IManager.Web.Domain.Interfaces.Persistence;
 using IManager.Web.Domain.Interfaces.Repositories;
-using IManager.Web.Presentation.ViewModels.Companies;
 using IManager.Web.Presentation.ViewModels.Departments;
 using IManager.Web.Shared;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace IManager.Web.Application.Services;
 
@@ -17,11 +14,15 @@ public class DepartmentService : IDepartmentService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IDepartmentsRepository _departmentRepository;
-    public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper, IDepartmentsRepository departmentRepository)
+    private readonly ILogger<DepartmentService> _logger;
+
+    public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper, 
+        IDepartmentsRepository departmentRepository, ILogger<DepartmentService> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _departmentRepository = departmentRepository;
+        _logger = logger;
     }
 
     public async Task<DepartmentViewModel?> GetViewModelByIdAsync(Guid id)
@@ -128,8 +129,10 @@ public class DepartmentService : IDepartmentService
         {
             await _departmentRepository.AddAsync(entity);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao criar setor {Name}", entity.Name);
+
             return Result.Fail("Não foi possivel cadastrar Setor. Por favor, tente novamente.");
         }
 
@@ -155,8 +158,10 @@ public class DepartmentService : IDepartmentService
         {
             await _departmentRepository.UpdateAsync(entity);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao atualizar setor {Id}", entity.Id);
+
             return Result.Fail("Falha ao atualizar Setor, por favor tente novamente.");
         }
 
@@ -174,8 +179,10 @@ public class DepartmentService : IDepartmentService
         {
             await _departmentRepository.SoftDeleteAsync(id);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao excluir setor {Id}", id);
+
             return Result.Fail("Falha ao excluir Setor, por favor tente novamente.");
         }
 

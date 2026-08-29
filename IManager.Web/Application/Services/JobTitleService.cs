@@ -16,12 +16,14 @@ public class JobTitleService : IJobTitleService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly IJobTitlesRepository _jobTitleRepository;
+    private readonly ILogger<JobTitleService> _logger;
 
-    public JobTitleService(IUnitOfWork unitOfWork, IMapper mapper, IJobTitlesRepository jobTitleRepository)
+    public JobTitleService(IUnitOfWork unitOfWork, IMapper mapper, IJobTitlesRepository jobTitleRepository, ILogger<JobTitleService> logger)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _jobTitleRepository = jobTitleRepository;
+        _logger = logger;
     }
 
     public async Task<Result> CreateAsync(CreateJobTitleModelView model)
@@ -34,6 +36,8 @@ public class JobTitleService : IJobTitleService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Falha ao cadastrar Cargo.");
+
             return Result.Fail("Não foi possivel cadastrar Cargo. Por favor, tente novamente.");
         }
 
@@ -51,8 +55,10 @@ public class JobTitleService : IJobTitleService
         {
             await _jobTitleRepository.SoftDeleteAsync(id);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao excluir cargo {Id}", id);
+
             return Result.Fail("Falha ao atualizar Cargo. Por favor, tente novamente.");
         }
 
@@ -66,6 +72,7 @@ public class JobTitleService : IJobTitleService
 
         var model = _mapper.Map<DetailsJobTitleModelView>(entity);
         var info = await _jobTitleRepository.GetInfoByIdAsync(id);
+        if(info == null) return null;
         model.Info = info;
 
         return model;
@@ -153,8 +160,10 @@ public class JobTitleService : IJobTitleService
         {
             await _jobTitleRepository.UpdateAsync(entity);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Erro ao atualizar cargo {Id}", entity.Id);
+
             return Result.Fail("Falha ao atualizar Cargo. Por favor, tente novamente.");
         }
 

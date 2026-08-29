@@ -24,14 +24,16 @@ public class TimeCheckApiController : ControllerBase
     private readonly IRepository<TimeCheck> _timeCheckRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly ILogger<TimeCheckApiController> _logger;
 
     public TimeCheckApiController(IRepository<TimeEntry> timeEntryRepository, IRepository<TimeCheck> timeCheckRepository, 
-        IUnitOfWork unitOfWork, IMapper mapper)
+        IUnitOfWork unitOfWork, IMapper mapper, ILogger<TimeCheckApiController> logger)
     {
         _timeEntryRepository = timeEntryRepository;
         _timeCheckRepository = timeCheckRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _logger = logger;
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -78,9 +80,11 @@ public class TimeCheckApiController : ControllerBase
 
             return NoContent();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             await _unitOfWork.RollbackAsync();
+            _logger.LogError(ex, "Erro ao incluir TimeCheck");
+
             throw;
         }
     }
