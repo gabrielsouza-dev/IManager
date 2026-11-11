@@ -8,7 +8,8 @@ public static class DataProtectionExtensions
     this WebApplicationBuilder builder)
     {
         builder.Services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+            // no container o content root é /app (volume ./keys:/app/keys); localmente, IManager.Web/keys
+            .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "keys")))
             .SetApplicationName("IManager");
     }
 }
