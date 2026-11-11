@@ -190,6 +190,8 @@ public static class InitializeExtensions
                 })
                 .OrderBy(group => group.Key.Year)
                 .ThenBy(group => group.Key.Month)
+                // o último mês fica sem processar, para demonstrar a geração de folha
+                .SkipLast(1)
                 .Select(group =>
                     new ProcessPayrollRequest(
                         group

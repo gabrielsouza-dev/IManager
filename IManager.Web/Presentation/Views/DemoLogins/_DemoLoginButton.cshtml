@@ -1,0 +1,7 @@
+@model DemoLoginViewModel
+
+<form asp-controller="Account" asp-action="Login" method="post" class="d-inline m-0">
+    <input type="hidden" name="email" value="@Model.Email" />
+    <input type="hidden" name="password" value="@Model.Password" />
+    <button type="submit" class="btn btn-sm btn-primary">Entrar</button>
+</form>

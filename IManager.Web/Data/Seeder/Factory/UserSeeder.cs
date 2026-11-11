@@ -78,7 +78,8 @@ public sealed class UserSeeder : IEntitySeeder<UserSeedData>
                 new("DepartmentId", jobTitle.Department.Id.ToString()),
                 new("Department", jobTitle.Department.Name),
                 new("JobTitleId", profile.JobTitleId.ToString()),
-                new("JobTitle", jobTitle.Name)
+                new("JobTitle", jobTitle.Name),
+                new(DemoSeed.ClaimType, "true")
             });
         }
     }

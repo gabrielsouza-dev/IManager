@@ -25,5 +25,7 @@ public static class ServiceExtensions
         builder.Services.AddTransient<IPayrollGenerationService, PayrollGenerationService>();
 
         builder.Services.AddScoped<IPayslipService, PayslipService>();
+
+        builder.Services.AddScoped<IDemoLoginService, DemoLoginService>();
     }
 }

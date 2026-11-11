@@ -1,5 +1,7 @@
 ﻿using IManager.Web.Data.Persistence;
+using IManager.Web.Domain.Consts;
 using IManager.Web.Domain.Entities.Users;
+using IManager.Web.Presentation.ViewModels.DemoLogins;
 using IManager.Web.Domain.Interfaces.Repositories;
 using IManager.Web.Presentation.ViewModels.Users;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +10,27 @@ namespace IManager.Web.Data.Repositories;
 public class UserProfilesRepository : Repository<UserProfile>, IUserProfilesRepository
 {
     public UserProfilesRepository(ApplicationDbContext context) : base(context) { }
+
+    public async Task<IEnumerable<DemoLoginViewModel>> GetDemoLoginsAsync()
+    {
+        var demoUserIds = _context.UserClaims
+            .Where(c => c.ClaimType == DemoSeed.ClaimType)
+            .Select(c => c.UserId);
+
+        return await _dbSet
+            .AsNoTracking()
+            .Where(p => demoUserIds.Contains(p.Id))
+            .Join(_context.Users, p => p.Id, u => u.Id, (p, u) => new DemoLoginViewModel
+            {
+                FullName = p.FullName,
+                Email = u.Email!,
+                Role = p.Role,
+                JobTitle = p.JobTitle.Name,
+                CompanyId = p.CompanyId,
+                CompanyTradeName = p.Company.TradeName
+            })
+            .ToListAsync();
+    }
 
     public async Task<InfoUserProfileViewModel?> GetInfoByIdAsync(Guid id)
     {

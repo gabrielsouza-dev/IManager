@@ -212,7 +212,7 @@ public static class DemoSeedBuilder
         users.Add(new UserSeedData(
             Guid.NewGuid(),
             adminEmail,
-            "Admin@123",
+            DemoSeed.AdminPassword,
             Role.Admin,
             $"{fantasyName} Administrator",
             GenerateCpf(),
@@ -234,7 +234,7 @@ public static class DemoSeedBuilder
             users.Add(new UserSeedData(
                 Guid.NewGuid(),
                 email,
-                "User@123",
+                DemoSeed.UserPassword,
                 Role.User,
                 $"{first} {last}",
                 GenerateCpf(),

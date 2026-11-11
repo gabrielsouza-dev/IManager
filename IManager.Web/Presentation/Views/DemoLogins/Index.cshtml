@@ -1,0 +1,83 @@
+@model DemoLoginsViewModel
+
+@{
+    ViewData["Title"] = "Logins de demonstração";
+}
+
+<div class="mb-4">
+    <h4 class="fw-600 mb-1">Logins de demonstração</h4>
+    <p class="text-muted small mb-0">
+        Contas criadas automaticamente pelo seed. Usuários cadastrados depois não aparecem nesta lista.
+    </p>
+</div>
+
+@if (!Model.Staff.Any() && !Model.Companies.Any())
+{
+    <div class="alert alert-secondary">Nenhum login de demonstração encontrado.</div>
+}
+
+@if (Model.Staff.Any())
+{
+    <div class="card shadow-sm mb-4 border-dark">
+        <div class="card-header bg-dark text-white fw-600">Staff</div>
+        <div class="card-body p-0">
+            <table class="table table-sm mb-0 align-middle">
+                <tbody>
+                    @foreach (var login in Model.Staff)
+                    {
+                        <tr>
+                            <td class="ps-3">@login.FullName</td>
+                            <td><code>@login.Email</code></td>
+                            <td><code>@login.Password</code></td>
+                            <td class="text-end pe-3"><partial name="_DemoLoginButton" model="login" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@foreach (var company in Model.Companies)
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-header fw-600">@company.CompanyTradeName</div>
+
+        @if (company.Admin is not null)
+        {
+            <div class="alert alert-primary rounded-0 border-0 border-bottom mb-0 d-flex flex-wrap gap-3 align-items-center">
+                <span class="badge bg-primary">Admin</span>
+                <span class="fw-600">@company.Admin.FullName</span>
+                <code>@company.Admin.Email</code>
+                <code>@company.Admin.Password</code>
+                <span class="ms-auto"><partial name="_DemoLoginButton" model="company.Admin" /></span>
+            </div>
+        }
+
+        <div class="card-body p-0">
+            <table class="table table-sm table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Funcionário</th>
+                        <th>Cargo</th>
+                        <th>E-mail</th>
+                        <th>Senha</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var login in company.Users)
+                    {
+                        <tr>
+                            <td class="ps-3">@login.FullName</td>
+                            <td class="text-muted small">@login.JobTitle</td>
+                            <td><code>@login.Email</code></td>
+                            <td><code>@login.Password</code></td>
+                            <td class="text-end pe-3"><partial name="_DemoLoginButton" model="login" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
