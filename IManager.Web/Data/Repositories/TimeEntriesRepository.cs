@@ -18,16 +18,18 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
 {
     public TimeEntriesRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<TimeEntryAudit>> GetAuditHistory(Guid companyId, DateOnly date)
+    public async Task<IEnumerable<TimeEntryAudit>> GetAuditHistoryPagedAsync(Func<IQueryable<TimeEntry>, IQueryable<TimeEntry>> query, int page, int pageSize)
     {
-        return await _dbSet
-            .Where(t => 
-                t.Employee.CompanyId == companyId && 
-                t.Employee.Role == Role.User &&
-                t.ParentId != null && 
-                t.Status != TimeEntryStatus.Pending &&
-                t.Date.Month == date.Month &&
-                t.Date.Year == date.Year)
+        IQueryable<TimeEntry> dbset = _dbSet.AsNoTracking();
+
+        if (query != null)
+            dbset = query(dbset);
+
+        return await dbset
+            .OrderByDescending(t => t.LastModified)
+            .ThenBy(t => t.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(t => new TimeEntryAudit
             {
                 Id = t.Id,
@@ -40,7 +42,6 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
                 LastModified = t.LastModified ?? DateTime.MinValue,
                 Status = t.Status
             })
-            .OrderByDescending(t => t.LastModified)
             .ToListAsync();
     }
 
@@ -65,16 +66,19 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
             .ToList();
     }
 
-    public async Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly competenceDate)
+    public async Task<IEnumerable<TimeEntryPending>> GetPendingPagedAsync(Func<IQueryable<TimeEntry>, IQueryable<TimeEntry>> query, int page, int pageSize)
     {
-        var result = await _dbSet
-            .AsNoTracking()
-            .Where(t => 
-                (t.Employee.CompanyId == companyId) &&
-                (t.Status == TimeEntryStatus.Pending) && 
-                t.Employee.Role == Role.User &&
-                t.Date.Month == competenceDate.Month && 
-                t.Date.Year == competenceDate.Year)
+        IQueryable<TimeEntry> dbset = _dbSet.AsNoTracking();
+
+        if (query != null)
+            dbset = query(dbset);
+
+        var result = await dbset
+            .OrderBy(t => t.Date)
+            .ThenBy(t => t.Employee.FullName)
+            .ThenBy(t => t.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(t => new TimeEntryPending()
             {
                 Id = t.Id,
@@ -105,18 +109,32 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
         return result;
     }
 
-    public async Task<IEnumerable<PayrollViewModel>> GetPendingPayrollsAsync(Guid companyId, DateOnly competenceDate)
+    public async Task<int> CountPendingPayrollsAsync(Guid companyId, DateOnly competenceDate)
     {
-        var result = await _dbSet
-            .AsNoTracking()
-            .Where(t => 
-                t.Employee.CompanyId == companyId &&
-                t.Employee.Role == Role.User &&
-                t.IsCurrent == true && 
-                t.PayslipId == null &&
-                t.Status == TimeEntryStatus.Accepted &&
-                t.Date.Month == competenceDate.Month && 
-                t.Date.Year == competenceDate.Year)
+        return await PendingPayrollsQuery(companyId, competenceDate)
+            .Select(t => t.EmployeeId)
+            .Distinct()
+            .CountAsync();
+    }
+
+    public async Task<IEnumerable<PayrollViewModel>> GetPendingPayrollsPagedAsync(Guid companyId, DateOnly competenceDate, int page, int pageSize)
+    {
+        // Pagina por funcionário (cada linha da tabela é um funcionário), não por TimeEntry
+        var employeeIds = await PendingPayrollsQuery(companyId, competenceDate)
+            .Select(t => new { t.EmployeeId, t.Employee.FullName })
+            .Distinct()
+            .OrderBy(e => e.FullName)
+            .ThenBy(e => e.EmployeeId)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(e => e.EmployeeId)
+            .ToListAsync();
+
+        if (employeeIds.Count == 0)
+            return Enumerable.Empty<PayrollViewModel>();
+
+        var result = await PendingPayrollsQuery(companyId, competenceDate)
+            .Where(t => employeeIds.Contains(t.EmployeeId))
             .Select(g => new
             {
                 CompanyId = g.Employee.CompanyId,
@@ -163,9 +181,25 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
                     }
                 };
             })
+            .OrderBy(p => p.EmployeeName)
+            .ThenBy(p => p.EmployeeId)
             .ToList();
 
         return summary;
+    }
+
+    private IQueryable<TimeEntry> PendingPayrollsQuery(Guid companyId, DateOnly competenceDate)
+    {
+        return _dbSet
+            .AsNoTracking()
+            .Where(t =>
+                t.Employee.CompanyId == companyId &&
+                t.Employee.Role == Role.User &&
+                t.IsCurrent == true &&
+                t.PayslipId == null &&
+                t.Status == TimeEntryStatus.Accepted &&
+                t.Date.Month == competenceDate.Month &&
+                t.Date.Year == competenceDate.Year);
     }
 
     public async Task<IEnumerable<DateOnly>> GetPayrollCompetencesAsync(Guid companyId)

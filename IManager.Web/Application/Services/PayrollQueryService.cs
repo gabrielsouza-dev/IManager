@@ -1,5 +1,6 @@
 ﻿using IManager.Web.Application.Interfaces;
 using IManager.Web.Domain.Entities.Companies;
+using IManager.Web.Domain.Entities.Payrolls;
 using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Interfaces.Persistence;
 using IManager.Web.Domain.Interfaces.Repositories;
@@ -33,22 +34,45 @@ public class PayrollQueryService : IPayrollQueryService
         return model ?? Enumerable.Empty<DateOnly>();
     }   
 
-    public async Task<IEnumerable<PayrollViewModel>> GetPendingPayrollAsync(Guid companyId, DateOnly competenceDate)
+    public async Task<PagedResult<PayrollViewModel>> GetPendingPayrollPagedAsync(Guid companyId, DateOnly competenceDate, int page, int pageSize)
     {
         if (companyId == Guid.Empty)
-            return Enumerable.Empty<PayrollViewModel>();
+            return new PagedResult<PayrollViewModel>() { Page = page, PageSize = pageSize };
 
-        var model = await _timeEntryRepository.GetPendingPayrollsAsync(companyId, competenceDate);
-        return model ?? Enumerable.Empty<PayrollViewModel>();
+        var totalCount = await _timeEntryRepository.CountPendingPayrollsAsync(companyId, competenceDate);
+
+        var items = await _timeEntryRepository.GetPendingPayrollsPagedAsync(companyId, competenceDate, page, pageSize);
+
+        return new PagedResult<PayrollViewModel>()
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
-    public async Task<IEnumerable<ProcessedPayrollViewModel>> GetProcessedPayrollAsync(Guid companyId, DateOnly competenceDate)
+    public async Task<PagedResult<ProcessedPayrollViewModel>> GetProcessedPayrollPagedAsync(Guid companyId, DateOnly competenceDate, int page, int pageSize)
     {
         if (companyId == Guid.Empty)
-            return Enumerable.Empty<ProcessedPayrollViewModel>();
+            return new PagedResult<ProcessedPayrollViewModel>() { Page = page, PageSize = pageSize };
 
-        var model = await _payslipRepository.GetProcessedPayrollsAsync(companyId, competenceDate);
-        return model ?? Enumerable.Empty<ProcessedPayrollViewModel>();
+        Func<IQueryable<Payslip>, IQueryable<Payslip>> query = q => q.Where(p =>
+            p.Payroll.CompanyId == companyId &&
+            p.Payroll.Competence.Month == competenceDate.Month &&
+            p.Payroll.Competence.Year == competenceDate.Year);
+
+        var totalCount = await _payslipRepository.CountAsync(query);
+
+        var items = await _payslipRepository.GetProcessedPayrollsPagedAsync(query, page, pageSize);
+
+        return new PagedResult<ProcessedPayrollViewModel>()
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
 }

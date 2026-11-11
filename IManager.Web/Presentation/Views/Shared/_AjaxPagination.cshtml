@@ -1,0 +1,48 @@
+@model AjaxPaginationViewModel
+
+@{
+    int total = Model.TotalCount;
+    int pageSize = Model.PageSize;
+    int page = Model.Page;
+
+    int start = total == 0 ? 0 : ((page - 1) * pageSize) + 1;
+    int end = Math.Min(page * pageSize, total);
+
+    var totalPages = (int)Math.Ceiling((double)total / pageSize);
+}
+
+<div class="d-flex justify-content-end align-items-center mt-3 mb-3">
+    <div class="d-flex align-items-center gap-3">
+
+        <small class="text-muted">
+            @if (total > 0)
+            {
+                <span>Mostrando @start–@end de @total registros</span>
+            }
+            else
+            {
+                <span>Nenhum registro encontrado</span>
+            }
+        </small>
+
+        <select class="form-select w-auto" data-page-size>
+            @foreach (var size in new[] { 10, 25, 50, 100 })
+            {
+                <option value="@size" selected="@(size == pageSize)">
+                    @size por página
+                </option>
+            }
+        </select>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == page ? "active" : "")">
+                        <a class="page-link" href="#" data-page="@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>

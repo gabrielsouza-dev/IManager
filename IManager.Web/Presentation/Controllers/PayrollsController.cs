@@ -50,20 +50,20 @@ public class PayrollsController : Controller
         return Ok();
     }
 
-    public async Task<IActionResult> _PayrollPendingTable(DateOnly competenceDate)
+    public async Task<IActionResult> _PayrollPendingTable([FromQuery] DateOnly competenceDate, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var companyId = GetCompanyId();
 
-        var model = await _payrollQueryService.GetPendingPayrollAsync(companyId, competenceDate);
+        var model = await _payrollQueryService.GetPendingPayrollPagedAsync(companyId, competenceDate, page, pageSize);
 
         return PartialView("_PayrollPendingTable", model);
     }
 
-    public async Task<IActionResult> _PayrollProcessedTable(DateOnly competenceDate)
+    public async Task<IActionResult> _PayrollProcessedTable([FromQuery] DateOnly competenceDate, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var companyId = GetCompanyId();
 
-        var model = await _payrollQueryService.GetProcessedPayrollAsync(companyId, competenceDate);
+        var model = await _payrollQueryService.GetProcessedPayrollPagedAsync(companyId, competenceDate, page, pageSize);
 
         return PartialView("_PayrollProcessedTable", model);
     }

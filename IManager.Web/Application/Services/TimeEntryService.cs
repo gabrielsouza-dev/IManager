@@ -1,4 +1,5 @@
 ﻿using IManager.Web.Application.Interfaces;
+using IManager.Web.Domain.Consts;
 using IManager.Web.Domain.Entities.TimeTrackings;
 using IManager.Web.Domain.Enums;
 using IManager.Web.Domain.Interfaces.Persistence;
@@ -22,22 +23,55 @@ public class TimeEntryService : ITimeEntryService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<TimeEntryAudit>> GetAllAuditViewModel(Guid companyId, DateOnly date)
+    public async Task<PagedResult<TimeEntryAudit>> GetAuditPagedAsync(Guid companyId, DateOnly date, int page, int pageSize)
     {
         if (companyId == Guid.Empty)
-            return Enumerable.Empty<TimeEntryAudit>();
+            return new PagedResult<TimeEntryAudit>() { Page = page, PageSize = pageSize };
 
-        var model = await _timeEntryRepository.GetAuditHistory(companyId, date);
-        return model;
+        Func<IQueryable<TimeEntry>, IQueryable<TimeEntry>> query = q => q.Where(t =>
+            t.Employee.CompanyId == companyId &&
+            t.Employee.Role == Role.User &&
+            t.ParentId != null &&
+            t.Status != TimeEntryStatus.Pending &&
+            t.Date.Month == date.Month &&
+            t.Date.Year == date.Year);
+
+        var totalCount = await _timeEntryRepository.CountAsync(query);
+
+        var items = await _timeEntryRepository.GetAuditHistoryPagedAsync(query, page, pageSize);
+
+        return new PagedResult<TimeEntryAudit>()
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
-    public async Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly date   )
+    public async Task<PagedResult<TimeEntryPending>> GetPendingPagedAsync(Guid companyId, DateOnly date, int page, int pageSize)
     {
-        if(companyId == Guid.Empty)
-            return Enumerable.Empty<TimeEntryPending>();
+        if (companyId == Guid.Empty)
+            return new PagedResult<TimeEntryPending>() { Page = page, PageSize = pageSize };
 
-        var model = await _timeEntryRepository.GetAllPendingViewModel(companyId, date);
-        return model;
+        Func<IQueryable<TimeEntry>, IQueryable<TimeEntry>> query = q => q.Where(t =>
+            t.Employee.CompanyId == companyId &&
+            t.Status == TimeEntryStatus.Pending &&
+            t.Employee.Role == Role.User &&
+            t.Date.Month == date.Month &&
+            t.Date.Year == date.Year);
+
+        var totalCount = await _timeEntryRepository.CountAsync(query);
+
+        var items = await _timeEntryRepository.GetPendingPagedAsync(query, page, pageSize);
+
+        return new PagedResult<TimeEntryPending>()
+        {
+            Items = items,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<IEnumerable<DateOnly>> GetPendingDates(Guid companyId)

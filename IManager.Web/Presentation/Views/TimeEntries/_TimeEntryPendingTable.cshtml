@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TimeEntryPending>
+﻿@model PagedResult<TimeEntryPending>
 
 <table class="table table-striped">
     <thead>
@@ -16,14 +16,14 @@
     </thead>
 
     <tbody>
-        @if (!Model.Any())
+        @if (!Model.Items.Any())
         {
             <tr>
                 <td colspan="10" class="text-center">Nenhum ajuste de ponto pendente.</td>
             </tr>
         }
 
-        @foreach (var timeEntry in Model)
+        @foreach (var timeEntry in Model.Items)
         {
             var originalChecks = string.Join(" ",
                 timeEntry.OriginalChecks
@@ -81,6 +81,8 @@
         }
     </tbody>
 </table>
+
+<partial name="_AjaxPagination" model="@(new AjaxPaginationViewModel(Model.TotalCount, Model.Page, Model.PageSize))" />
 
 <!-- Modal de APROVAÇÃO -->
 <div class="modal fade" id="approveModal" tabindex="-1" aria-hidden="true">

@@ -5,5 +5,5 @@ namespace IManager.Web.Application.Interfaces;
 public interface IPayslipService
 {
     Task<PayslipViewModel?> GetByIdAsync(Guid userId, Guid payslipId);
-    Task<IEnumerable<IndexPayslipViewModel>> GetPayslipByUserAsync(Guid userId);
+    Task<PagedResult<IndexPayslipViewModel>> GetPagedByUserAsync(Guid userId, int page, int pageSize);
 }

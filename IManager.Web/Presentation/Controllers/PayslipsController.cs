@@ -18,11 +18,11 @@ public class PayslipsController : Controller
         _payslipService = payslipService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var userId = GetUserId();
 
-        var model = await _payslipService.GetPayslipByUserAsync(userId);
+        var model = await _payslipService.GetPagedByUserAsync(userId, page, pageSize);
         return View(model);
     }
 

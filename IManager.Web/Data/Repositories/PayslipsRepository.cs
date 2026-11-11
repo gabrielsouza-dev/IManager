@@ -14,18 +14,24 @@ public class PayslipsRepository : Repository<Payslip>, IPayslipsRepository
 {
     public PayslipsRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<IndexPayslipViewModel>> GetPayslipsByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<IndexPayslipViewModel>> GetIndexPagedAsync(Func<IQueryable<Payslip>, IQueryable<Payslip>> query, int page, int pageSize)
     {
-        var result = await _dbSet
-            .AsNoTracking()
-            .Where(p => p.EmployeeId == userId)
+        IQueryable<Payslip> dbset = _dbSet.AsNoTracking();
+
+        if (query != null)
+            dbset = query(dbset);
+
+        var result = await dbset
+            .OrderByDescending(p => p.Payroll.Competence)
+            .ThenBy(p => p.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(p => new IndexPayslipViewModel
             {
                 Id = p.Id,
                 CreatedAt = p.CreatedAt,
                 CompetenceDate = p.Payroll.Competence
             })
-            .OrderByDescending(x => x.CompetenceDate)
             .ToListAsync();
 
         return result;
@@ -80,13 +86,18 @@ public class PayslipsRepository : Repository<Payslip>, IPayslipsRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<ProcessedPayrollViewModel>> GetProcessedPayrollsAsync(Guid companyId, DateOnly competenceDate)
+    public async Task<IEnumerable<ProcessedPayrollViewModel>> GetProcessedPayrollsPagedAsync(Func<IQueryable<Payslip>, IQueryable<Payslip>> query, int page, int pageSize)
     {
-        var result = await _dbSet
-            .AsNoTracking()
-            .Where(p => p.Payroll.CompanyId == companyId
-                && p.Payroll.Competence.Month == competenceDate.Month
-                && p.Payroll.Competence.Year == competenceDate.Year)
+        IQueryable<Payslip> dbset = _dbSet.AsNoTracking();
+
+        if (query != null)
+            dbset = query(dbset);
+
+        var result = await dbset
+            .OrderBy(p => p.Employee.FullName)
+            .ThenBy(p => p.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(p => new ProcessedPayrollViewModel
             {
                 Id = p.Id,

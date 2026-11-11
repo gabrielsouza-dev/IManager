@@ -1,43 +1,43 @@
-﻿@model IEnumerable<ProcessedPayrollViewModel>
+﻿@model PagedResult<ProcessedPayrollViewModel>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.EmployeeName)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.EmployeeName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmployeeDepartment)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.EmployeeDepartment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmployeeJobtitle)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.EmployeeJobtitle)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.GrossSalary)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.GrossSalary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NetSalary)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.NetSalary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RegularSalary)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.RegularSalary)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TotalExtraEarnings)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.TotalExtraEarnings)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TotalDeductions)
+                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.TotalDeductions)
             </th>
         </tr>
     </thead>
     <tbody>
-        @if (!Model.Any())
+        @if (!Model.Items.Any())
         {
             <tr>
                 <td colspan="9" class="text-center">Nenhuma folha processada.</td>
             </tr>
         }
 
-        @foreach (var item in Model)
+        @foreach (var item in Model.Items)
         {
             <tr>
                 <td>
@@ -68,3 +68,5 @@
         }
     </tbody>
 </table>
+
+<partial name="_AjaxPagination" model="@(new AjaxPaginationViewModel(Model.TotalCount, Model.Page, Model.PageSize))" />

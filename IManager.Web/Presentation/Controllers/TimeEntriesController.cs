@@ -29,20 +29,20 @@ public class TimeEntriesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> _TimeEntryPendingTable(DateOnly date)
+    public async Task<IActionResult> _TimeEntryPendingTable([FromQuery] DateOnly date, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
-        IEnumerable<TimeEntryPending> model = await _timeEntryService.GetAllPendingViewModel(companyId, date);
+        PagedResult<TimeEntryPending> model = await _timeEntryService.GetPendingPagedAsync(companyId, date, page, pageSize);
         return PartialView(model);
     }
 
     [HttpGet]
-    public async Task<IActionResult> _TimeEntryAuditTable(DateOnly date)
+    public async Task<IActionResult> _TimeEntryAuditTable([FromQuery] DateOnly date, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
         var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
-        IEnumerable<TimeEntryAudit> model = await _timeEntryService.GetAllAuditViewModel(companyId, date);
+        PagedResult<TimeEntryAudit> model = await _timeEntryService.GetAuditPagedAsync(companyId, date, page, pageSize);
         return PartialView(model);
     }
 

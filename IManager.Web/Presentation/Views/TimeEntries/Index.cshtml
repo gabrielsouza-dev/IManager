@@ -44,8 +44,11 @@
         tableContainer.innerHTML = null;
     }
 
+    let currentPage = 1;
+    let currentPageSize = 10;
+
     function fetchTimeEntryAudit(selectedDate) {
-        fetch(`/TimeEntries/_TimeEntryAuditTable?date=${selectedDate}`)
+        fetch(`/TimeEntries/_TimeEntryAuditTable?date=${selectedDate}&page=${currentPage}&pageSize=${currentPageSize}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -55,7 +58,7 @@
 
     function fetchTimeEntryPending(selectedDate) {
 
-        fetch(`/TimeEntries/_TimeEntryPendingTable?date=${selectedDate}`)
+        fetch(`/TimeEntries/_TimeEntryPendingTable?date=${selectedDate}&page=${currentPage}&pageSize=${currentPageSize}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -63,19 +66,43 @@
             .catch(error => console.error('Error fetching time entries:', error));
     }
 
+    function loadTable() {
+        const selectedDate = document.getElementById("data").value;
+        if (!selectedDate) return;
+
+        if (pending.checked) {
+            fetchTimeEntryPending(selectedDate);
+        } else if (approved.checked) {
+            fetchTimeEntryAudit(selectedDate);
+        }
+    }
+
+    // Paginação dos partials (_AjaxPagination)
+    tableContainer.addEventListener("click", function (e) {
+        const link = e.target.closest("a[data-page]");
+        if (!link) return;
+
+        e.preventDefault();
+        currentPage = parseInt(link.dataset.page);
+        loadTable();
+    });
+
+    tableContainer.addEventListener("change", function (e) {
+        const select = e.target.closest("select[data-page-size]");
+        if (!select) return;
+
+        currentPageSize = parseInt(select.value);
+        currentPage = 1;
+        loadTable();
+    });
+
     pending.addEventListener("change", updateTabs);
     approved.addEventListener("change", updateTabs);
 
     updateTabs();
 
     document.getElementById("data").addEventListener("change", function () {
-        var selectedDate = this.value;
-        if (selectedDate) {
-            if (pending.checked) {
-                fetchTimeEntryPending(selectedDate);
-            } else if (approved.checked) {
-                fetchTimeEntryAudit(selectedDate);
-            }
-        }
+        currentPage = 1;
+        loadTable();
     });
 </script>

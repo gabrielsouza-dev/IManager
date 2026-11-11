@@ -1,40 +1,40 @@
-﻿@model IEnumerable<PayrollViewModel>
+﻿@model PagedResult<PayrollViewModel>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.EmployeeName)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.EmployeeName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Competence)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.Competence)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PeriodStart)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.PeriodStart)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PeriodEnd)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.PeriodEnd)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEntry.HoursWorked)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.TimeEntry.HoursWorked)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEntry.DaysWorked)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.TimeEntry.DaysWorked)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TimeEntry.IsConsistent)
+                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.TimeEntry.IsConsistent)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @if (!Model.Any())
+        @if (!Model.Items.Any())
         {
             <tr>
                 <td colspan="10" class="text-center">Nenhuma folha de ponto pendente.</td>
             </tr>
         }
-@foreach (var item in Model) {
+@foreach (var item in Model.Items) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.EmployeeName)
@@ -72,6 +72,8 @@
 }
     </tbody>
 </table>
+
+<partial name="_AjaxPagination" model="@(new AjaxPaginationViewModel(Model.TotalCount, Model.Page, Model.PageSize))" />
 
 <!-- Modal de Confirmação -->
 <div class="modal fade" id="processModal" tabindex="-1" aria-hidden="true">

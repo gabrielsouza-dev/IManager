@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IManager.Web.Application.Interfaces;
+using IManager.Web.Domain.Entities.Payrolls;
 using IManager.Web.Domain.Interfaces.Repositories;
 using IManager.Web.Presentation.ViewModels.Payslips;
 
@@ -21,12 +22,20 @@ public class PayslipService : IPayslipService
         return await _payslipsRepository.GetPayslipViewModelAsync(payslipId);
     }
 
-    public async Task<IEnumerable<IndexPayslipViewModel>> GetPayslipByUserAsync(Guid userId)
+    public async Task<PagedResult<IndexPayslipViewModel>> GetPagedByUserAsync(Guid userId, int page, int pageSize)
     {
-        var model = await _payslipsRepository.GetPayslipsByUserIdAsync(userId);
-        if(!model.Any())
-            return Enumerable.Empty<IndexPayslipViewModel>();
+        Func<IQueryable<Payslip>, IQueryable<Payslip>> query = q => q.Where(p => p.EmployeeId == userId);
 
-        return model;
+        var totalCount = await _payslipsRepository.CountAsync(query);
+
+        IEnumerable<IndexPayslipViewModel> indexViewModel = await _payslipsRepository.GetIndexPagedAsync(query, page, pageSize);
+
+        return new PagedResult<IndexPayslipViewModel>()
+        {
+            Items = indexViewModel,
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
     }
 }

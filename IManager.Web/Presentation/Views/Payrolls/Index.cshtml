@@ -38,7 +38,15 @@
     const tableContainer = document.getElementById("tableContainer");
     const data = document.getElementById("data");
 
+    let currentPage = 1;
+    let currentPageSize = 10;
+
     function updateTabs() {
+        currentPage = 1;
+        loadTable();
+    }
+
+    function loadTable() {
         tableContainer.innerHTML = "";
 
         if (!data.value) {
@@ -53,7 +61,7 @@
     }
 
     function fetchPayrollPending(selectedDate) {
-        fetch(`/Payrolls/_PayrollPendingTable?competenceDate=${selectedDate}`)
+        fetch(`/Payrolls/_PayrollPendingTable?competenceDate=${selectedDate}&page=${currentPage}&pageSize=${currentPageSize}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -64,7 +72,7 @@
     }
 
     function fetchPayrollProcessed(selectedDate) {
-        fetch(`/Payrolls/_PayrollProcessedTable?competenceDate=${selectedDate}`)
+        fetch(`/Payrolls/_PayrollProcessedTable?competenceDate=${selectedDate}&page=${currentPage}&pageSize=${currentPageSize}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -73,6 +81,25 @@
                 console.error('Error fetching payrolls:', error)
             );
     }
+
+    // Paginação dos partials (_AjaxPagination)
+    tableContainer.addEventListener("click", function (e) {
+        const link = e.target.closest("a[data-page]");
+        if (!link) return;
+
+        e.preventDefault();
+        currentPage = parseInt(link.dataset.page);
+        loadTable();
+    });
+
+    tableContainer.addEventListener("change", function (e) {
+        const select = e.target.closest("select[data-page-size]");
+        if (!select) return;
+
+        currentPageSize = parseInt(select.value);
+        currentPage = 1;
+        loadTable();
+    });
 
     pending.addEventListener("change", updateTabs);
     processed.addEventListener("change", updateTabs);
