@@ -18,7 +18,7 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
 {
     public TimeEntriesRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<TimeEntryAudit>> GetAudictoryHistory(Guid companyId, DateOnly date)
+    public async Task<IEnumerable<TimeEntryAudit>> GetAuditHistory(Guid companyId, DateOnly date)
     {
         return await _dbSet
             .Where(t => 
@@ -44,7 +44,7 @@ public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesReposito
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<DateOnly>> GetPendentDateTimeEntry(Guid companyId)
+    public async Task<IEnumerable<DateOnly>> GetPendingDateTimeEntry(Guid companyId)
     {
         var result = await _dbSet
             .Where(t =>

@@ -97,10 +97,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
             return await _dbSet.FindAsync(id);
         return await include(_dbSet).FirstOrDefaultAsync(e => e.Id == id);
     }
-    public async Task UpdateAsync(T entity, Guid? audictorId = null)
+    public async Task UpdateAsync(T entity, Guid? auditorId = null)
     {
-        if(audictorId != null)
-            entity.Touch(audictorId);
+        if(auditorId != null)
+            entity.Touch(auditorId);
         
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();

@@ -65,7 +65,7 @@ public class JobTitleService : IJobTitleService
         return Result.Ok();
     }
 
-    public async Task<DetailsJobTitleViewModel?> GetDetailsModelViewById(Guid id)
+    public async Task<DetailsJobTitleViewModel?> GetDetailsViewModelByIdAsync(Guid id)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(id, q => q.Include(j => j.Department).ThenInclude(d=>d.Company));
         if (entity == null) return null;
@@ -78,7 +78,7 @@ public class JobTitleService : IJobTitleService
         return model;
     }
 
-    public async Task<EditJobTitleViewModel?> GetEditModelViewByIdAsync(Guid id)
+    public async Task<EditJobTitleViewModel?> GetEditViewModelByIdAsync(Guid id)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(id);
         if (entity == null) return null;
@@ -86,7 +86,7 @@ public class JobTitleService : IJobTitleService
         return _mapper.Map<EditJobTitleViewModel?>(entity);
     }
 
-    public async Task<JobTitleViewModel?> GetModelViewByIdAsync(Guid id)
+    public async Task<JobTitleViewModel?> GetViewModelByIdAsync(Guid id)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(id);
 
@@ -134,11 +134,11 @@ public class JobTitleService : IJobTitleService
 
         var totalCount = await _jobTitleRepository.CountAsync(query);
 
-        IEnumerable<IndexJobTitleViewModel> indexModelView = await _jobTitleRepository.GetPagedAsync(query, page, pageSize);
+        IEnumerable<IndexJobTitleViewModel> indexViewModel = await _jobTitleRepository.GetPagedAsync(query, page, pageSize);
 
         var pagedViewModel = new PagedResult<IndexJobTitleViewModel>()
         {
-            Items = indexModelView,
+            Items = indexViewModel,
             Page = page,
             PageSize = pageSize,
             TotalCount = totalCount,

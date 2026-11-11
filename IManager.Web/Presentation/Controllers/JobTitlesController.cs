@@ -43,7 +43,7 @@ public class JobTitlesController : Controller
     {
         if (id == null) return NotFound();
 
-        var model = await _jobTitleService.GetDetailsModelViewById(id.Value);
+        var model = await _jobTitleService.GetDetailsViewModelByIdAsync(id.Value);
         if (model == null) return NotFound();
 
         return View(model);
@@ -87,7 +87,7 @@ public class JobTitlesController : Controller
     {
         if (id == null) return NotFound();
 
-        var jobTitle = await _jobTitleService.GetEditModelViewByIdAsync(id.Value);
+        var jobTitle = await _jobTitleService.GetEditViewModelByIdAsync(id.Value);
         if (jobTitle == null) return NotFound();
 
         return View(jobTitle);
@@ -118,7 +118,7 @@ public class JobTitlesController : Controller
     {
         if (id == null) return NotFound();
 
-        var jobTitle = await _jobTitleService.GetModelViewByIdAsync(id.Value);
+        var jobTitle = await _jobTitleService.GetViewModelByIdAsync(id.Value);
         if (jobTitle == null) return NotFound();
 
         return View(jobTitle);

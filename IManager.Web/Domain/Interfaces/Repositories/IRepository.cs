@@ -18,7 +18,7 @@ public interface IRepository<T> where T : class
     // WRITE
     Task AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);
-    Task UpdateAsync(T entity, Guid? audictorId = null);
+    Task UpdateAsync(T entity, Guid? auditorId = null);
     Task SoftDeleteAsync(Guid id);
     Task SoftDeleteAsync(T entity);
     Task DeleteRangeAsync(IEnumerable<T> entities);

@@ -9,8 +9,8 @@ namespace IManager.Web.Domain.Interfaces.Repositories;
 public interface ITimeEntriesRepository : IRepository<TimeEntry>
 {
     Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly date);
-    Task<IEnumerable<TimeEntryAudit>> GetAudictoryHistory(Guid companyId, DateOnly date);
-    Task<IEnumerable<DateOnly>> GetPendentDateTimeEntry(Guid companyId);
+    Task<IEnumerable<TimeEntryAudit>> GetAuditHistory(Guid companyId, DateOnly date);
+    Task<IEnumerable<DateOnly>> GetPendingDateTimeEntry(Guid companyId);
     Task<IEnumerable<DateOnly>> GetPayrollCompetencesAsync(Guid companyId);
     Task<IEnumerable<PayrollViewModel>> GetPendingPayrollsAsync(Guid companyId, DateOnly competenceDate);
     Task<IEnumerable<ProcessPayrollSummary>> GetProcessPayrollSummariesAsync(Guid companyId, ProcessPayrollRequest request);

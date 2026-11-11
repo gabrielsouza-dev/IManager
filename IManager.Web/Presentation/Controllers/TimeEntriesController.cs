@@ -24,7 +24,7 @@ public class TimeEntriesController : Controller
     {
         var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
-        IEnumerable<DateOnly> model = await _timeEntryService.GetPendentDates(companyId);
+        IEnumerable<DateOnly> model = await _timeEntryService.GetPendingDates(companyId);
         return View(model);
     }
 
@@ -42,7 +42,7 @@ public class TimeEntriesController : Controller
     {
         var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
-        IEnumerable<TimeEntryAudit> model = await _timeEntryService.GetAllAudictViewModel(companyId, date);
+        IEnumerable<TimeEntryAudit> model = await _timeEntryService.GetAllAuditViewModel(companyId, date);
         return PartialView(model);
     }
 
@@ -52,13 +52,13 @@ public class TimeEntriesController : Controller
         if (request.Id == Guid.Empty)
             return BadRequest("ID inválido.");
         
-        var audictorId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
+        var auditorId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
 
         Result result;
         if (request.IsApprove)
-            result = await _timeEntryService.ManageApprove(request.Id, audictorId);
+            result = await _timeEntryService.ManageApprove(request.Id, auditorId);
         else
-            result = await _timeEntryService.ManageReject(request.Id, request.Comment, audictorId);
+            result = await _timeEntryService.ManageReject(request.Id, request.Comment, auditorId);
 
         if (result.Succeeded)
             TempData[ToastMessages.Success] = "Processamento realizado com sucesso!";

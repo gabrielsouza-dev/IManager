@@ -22,12 +22,12 @@ public class TimeEntryService : ITimeEntryService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<TimeEntryAudit>> GetAllAudictViewModel(Guid companyId, DateOnly date)
+    public async Task<IEnumerable<TimeEntryAudit>> GetAllAuditViewModel(Guid companyId, DateOnly date)
     {
         if (companyId == Guid.Empty)
             return Enumerable.Empty<TimeEntryAudit>();
 
-        var model = await _timeEntryRepository.GetAudictoryHistory(companyId, date);
+        var model = await _timeEntryRepository.GetAuditHistory(companyId, date);
         return model;
     }
 
@@ -40,16 +40,16 @@ public class TimeEntryService : ITimeEntryService
         return model;
     }
 
-    public async Task<IEnumerable<DateOnly>> GetPendentDates(Guid companyId)
+    public async Task<IEnumerable<DateOnly>> GetPendingDates(Guid companyId)
     {
         if(companyId == Guid.Empty)
             return Enumerable.Empty<DateOnly>();
 
-        var model = await _timeEntryRepository.GetPendentDateTimeEntry(companyId);
+        var model = await _timeEntryRepository.GetPendingDateTimeEntry(companyId);
         return model;
     }
 
-    public async Task<Result> ManageApprove(Guid id, Guid audictorId)
+    public async Task<Result> ManageApprove(Guid id, Guid auditorId)
     {
         if(id == Guid.Empty)
             return Result.Fail("Id invalido.");
@@ -65,7 +65,7 @@ public class TimeEntryService : ITimeEntryService
 
             timeEntry.IsCurrent = true;
             timeEntry.Status = TimeEntryStatus.Accepted;
-            await _timeEntryRepository.UpdateAsync(timeEntry, audictorId);
+            await _timeEntryRepository.UpdateAsync(timeEntry, auditorId);
 
             await _unitOfWork.CommitAsync();
 
@@ -80,7 +80,7 @@ public class TimeEntryService : ITimeEntryService
         }
     }
 
-    public async Task<Result> ManageReject(Guid id, string? comment, Guid audictorId)
+    public async Task<Result> ManageReject(Guid id, string? comment, Guid auditorId)
     {
         if (id == Guid.Empty)
             return Result.Fail("Id invalido.");
@@ -97,7 +97,7 @@ public class TimeEntryService : ITimeEntryService
             timeEntry.IsCurrent = false;
             timeEntry.Status = TimeEntryStatus.Rejected;
             timeEntry.RejectionReason = comment;
-            await _timeEntryRepository.UpdateAsync(timeEntry, audictorId);
+            await _timeEntryRepository.UpdateAsync(timeEntry, auditorId);
 
             timeEntry.Parent!.IsCurrent = true;
             await _timeEntryRepository.UpdateAsync(timeEntry.Parent);
