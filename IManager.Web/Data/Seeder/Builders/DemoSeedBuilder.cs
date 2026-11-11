@@ -1,5 +1,6 @@
 ﻿using IManager.Web.Data.Seeder.SeedDatas;
 using IManager.Web.Domain.Consts;
+using IManager.Web.Domain.Enums;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -34,6 +35,7 @@ public static class DemoSeedBuilder
         var jobTitles = BuildJobTitles(departments);
         var users = BuildUsers(companyId, jobTitles, fantasyName);
         var entries = BuildTimeEntries(users);
+        entries.AddRange(BuildAdjustments(users, entries));
 
         return new DemoSeedData
         {
@@ -64,6 +66,7 @@ public static class DemoSeedBuilder
             {
                 var entry = new TimeEntrySeedData
                 {
+                    Id = Guid.NewGuid(),
                     EmployeeId = user.Id,
                     Date = day,
                     Checks = []
@@ -87,6 +90,123 @@ public static class DemoSeedBuilder
 
         return entries;
     }
+
+    private static readonly string[] AdjustmentReasons =
+    [
+        "Esqueci de registrar a saída",
+        "Hora extra autorizada pelo gestor",
+        "Reunião com cliente após o expediente",
+        "Falha no aplicativo ao bater o ponto",
+        "Consulta médica no início do dia",
+        "Treinamento externo"
+    ];
+
+    /// <summary>
+    /// Gera correções de ponto aleatórias no último mês (o mês que fica sem processar):
+    /// de 0 a 2 por funcionário, ~60% pendentes, ~25% aprovadas e ~15% reprovadas pelo admin.
+    /// </summary>
+    private static List<TimeEntrySeedData> BuildAdjustments(
+        List<UserSeedData> users,
+        List<TimeEntrySeedData> entries)
+    {
+        var admin = users.FirstOrDefault(u => u.Role == Role.Admin);
+        if (admin is null || entries.Count == 0)
+            return [];
+
+        var lastDate = entries.Max(e => e.Date);
+        var monthStart = new DateOnly(lastDate.Year, lastDate.Month, 1);
+        var now = DateTime.UtcNow;
+
+        var employeeIds = users
+            .Where(u => u.Role == Role.User)
+            .Select(u => u.Id)
+            .ToHashSet();
+
+        var adjustments = new List<TimeEntrySeedData>();
+
+        var entriesByEmployee = entries
+            .Where(e => employeeIds.Contains(e.EmployeeId) && e.Date >= monthStart)
+            .GroupBy(e => e.EmployeeId);
+
+        foreach (var employeeEntries in entriesByEmployee)
+        {
+            var count = RandomNumberGenerator.GetInt32(0, 3);
+
+            var parents = employeeEntries
+                .OrderBy(_ => RandomNumberGenerator.GetInt32(int.MaxValue))
+                .Take(count);
+
+            foreach (var parent in parents)
+            {
+                var roll = RandomNumberGenerator.GetInt32(100);
+                var status = roll < 60 ? TimeEntryStatus.Pending
+                           : roll < 85 ? TimeEntryStatus.Accepted
+                           : TimeEntryStatus.Rejected;
+
+                // solicitado no dia seguinte, auditado algumas horas depois (nunca no futuro)
+                var createdAt = Min(parent.Date.ToDateTime(new TimeOnly(13, 0), DateTimeKind.Utc).AddDays(1), now.AddHours(-3));
+                var auditedAt = Min(createdAt.AddHours(RandomNumberGenerator.GetInt32(1, 6)), now.AddHours(-1));
+
+                var adjustment = new TimeEntrySeedData
+                {
+                    Id = Guid.NewGuid(),
+                    EmployeeId = parent.EmployeeId,
+                    Date = parent.Date,
+                    ParentId = parent.Id,
+                    Status = status,
+                    IsCurrent = status == TimeEntryStatus.Accepted,
+                    AdjustmentReason = AdjustmentReasons[RandomNumberGenerator.GetInt32(AdjustmentReasons.Length)],
+                    RejectionReason = status == TimeEntryStatus.Rejected
+                        ? "Ajuste não autorizado pelo gestor"
+                        : null,
+                    CreatedAt = createdAt,
+                    LastModified = status == TimeEntryStatus.Pending ? null : auditedAt,
+                    LastModifierId = status == TimeEntryStatus.Pending ? null : admin.Id
+                };
+
+                adjustment.Checks = BuildAdjustedChecks(parent, adjustment.Id);
+
+                // aprovado: o ajuste passa a ser o registro vigente do dia
+                if (status == TimeEntryStatus.Accepted)
+                    parent.IsCurrent = false;
+
+                adjustments.Add(adjustment);
+            }
+        }
+
+        return adjustments;
+    }
+
+    /// <summary>
+    /// Copia as batidas originais alterando uma delas:
+    /// saída de 30 a 120 min mais tarde, ou entrada de 15 a 60 min mais cedo.
+    /// </summary>
+    private static List<TimeCheckSeedData> BuildAdjustedChecks(TimeEntrySeedData parent, Guid adjustmentId)
+    {
+        var ordered = parent.Checks.OrderBy(c => c.Timestamp).ToList();
+        var lateExit = RandomNumberGenerator.GetInt32(2) == 0;
+
+        return ordered
+            .Select((check, index) =>
+            {
+                var timestamp = check.Timestamp;
+
+                if (lateExit && index == ordered.Count - 1)
+                    timestamp = timestamp.AddMinutes(RandomNumberGenerator.GetInt32(30, 121));
+                else if (!lateExit && index == 0)
+                    timestamp = timestamp.AddMinutes(-RandomNumberGenerator.GetInt32(15, 61));
+
+                return new TimeCheckSeedData
+                {
+                    TimeEntryId = adjustmentId,
+                    Timestamp = timestamp,
+                    TimeZoneId = check.TimeZoneId
+                };
+            })
+            .ToList();
+    }
+
+    private static DateTime Min(DateTime a, DateTime b) => a < b ? a : b;
 
     private static TimeCheckSeedData CreateTimeCheck(
         Guid timeEntryId,

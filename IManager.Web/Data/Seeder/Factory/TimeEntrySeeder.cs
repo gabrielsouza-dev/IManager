@@ -22,6 +22,8 @@ public class TimeEntrySeeder : IEntitySeeder<TimeEntrySeedData>
         var items = data
             .OrderBy(x => x.EmployeeId)
             .ThenBy(x => x.Date)
+            // registro original antes do ajuste (ParentId), mesmo se caírem em lotes diferentes
+            .ThenBy(x => x.ParentId != null)
             .ToList();
 
         var employeeTotalCount = items
