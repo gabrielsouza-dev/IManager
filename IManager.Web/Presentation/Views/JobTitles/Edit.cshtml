@@ -1,78 +1,82 @@
 ﻿@model EditJobTitleViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Cargo";
 }
 
-<h1>Edit</h1>
-
-<h4>JobTitle</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsHazard" /> @Html.DisplayNameFor(model => model.IsHazard)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsUnhealthy" /> @Html.DisplayNameFor(model => model.IsUnhealthy)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsCommissioned" /> @Html.DisplayNameFor(model => model.IsCommissioned)
-                </label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input"
-                       type="radio"
-                       asp-for="IsTimeBank"
-                       value="true" />
-                <label class="form-check-label">
-                    Com Banco de Horas
-                </label>
-            </div>
-
-            <div class="form-check">
-                <input class="form-check-input"
-                       type="radio"
-                       asp-for="IsTimeBank"
-                       value="false" />
-                <label class="form-check-label">
-                    Sem Banco de Horas
-                </label>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="DailyHours" class="control-label"></label>
-                <input type="time"
-                       asp-for="DailyHours"
-                       class="form-control" />
-                <span asp-validation-for="DailyHours" class="text-danger"></span>
-            </div>
-
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Editar Cargo</h2>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Dados do Cargo</h5>
+            </div>
+
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="row mb-3">
+                    <label asp-for="Name" class="col-sm-3 col-form-label">Nome <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Adicionais</label>
+                    <div class="col-sm-9 pt-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" asp-for="IsHazard" />
+                            <label class="form-check-label" asp-for="IsHazard">Perigoso</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" asp-for="IsUnhealthy" />
+                            <label class="form-check-label" asp-for="IsUnhealthy">Insalubre</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" asp-for="IsCommissioned" />
+                            <label class="form-check-label" asp-for="IsCommissioned">Comissionado</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Banco de Horas</label>
+                    <div class="col-sm-9 pt-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" asp-for="IsTimeBank" value="true" id="timeBankYes" />
+                            <label class="form-check-label" for="timeBankYes">Com Banco de Horas</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" asp-for="IsTimeBank" value="false" id="timeBankNo" />
+                            <label class="form-check-label" for="timeBankNo">Sem Banco de Horas</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label asp-for="DailyHours" class="col-sm-3 col-form-label">Horas Diárias <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="time" asp-for="DailyHours" class="form-control" />
+                        <span asp-validation-for="DailyHours" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

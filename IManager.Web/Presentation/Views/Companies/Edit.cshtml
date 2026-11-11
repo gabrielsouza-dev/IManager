@@ -1,46 +1,66 @@
-﻿@model IManager.Web.Presentation.ViewModels.Companies.EditCompanyViewModel
+﻿@model EditCompanyViewModel
 
 @{
     ViewData["Title"] = "Editar Empresa";
 }
 
-<h4>Editar Empresa</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DocumentNumber" class="control-label">CNPJ: <span class="text-danger">*</span></label>
-                <input asp-for="DocumentNumber" class="form-control" />
-                <span asp-validation-for="DocumentNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LegalName" class="control-label">Razão Social: <span class="text-danger">*</span></label>
-                <input asp-for="LegalName" class="form-control" />
-                <span asp-validation-for="LegalName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TradeName" class="control-label">Nome Fantasia: <span class="text-danger">*</span></label>
-                <input asp-for="TradeName" class="form-control" />
-                <span asp-validation-for="TradeName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FoundedAt" class="control-label">Data de Fundação: <span class="text-danger">*</span></label>
-                <input asp-for="FoundedAt" class="form-control" />
-                <span asp-validation-for="FoundedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Editar Empresa</h2>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Voltar</a>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Dados da Empresa</h5>
+            </div>
+
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="row mb-3">
+                    <label asp-for="DocumentNumber" class="col-sm-3 col-form-label">CNPJ <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="DocumentNumber" class="form-control" />
+                        <span asp-validation-for="DocumentNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="LegalName" class="col-sm-3 col-form-label">Razão Social <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="LegalName" class="form-control" />
+                        <span asp-validation-for="LegalName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="TradeName" class="col-sm-3 col-form-label">Nome Fantasia <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="TradeName" class="form-control" />
+                        <span asp-validation-for="TradeName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label asp-for="FoundedAt" class="col-sm-3 col-form-label">Data de Fundação <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="FoundedAt" class="form-control" type="date" />
+                        <span asp-validation-for="FoundedAt" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -1,57 +1,52 @@
 ﻿@model JobTitleViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    var action = Model.IsActive ? "Desativar" : "Ativar";
+    ViewData["Title"] = $"{action} Cargo";
 }
 
-<h1>Delete</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">@action Cargo</h5>
+                </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>JobTitle</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsHazard)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsHazard)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsUnhealthy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsUnhealthy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsCommissioned)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsCommissioned)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsTimeBank)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsTimeBank)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DailyHours)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DailyHours)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+                <div class="card-body">
+                    <div class="alert @(Model.IsActive ? "alert-warning" : "alert-info") mb-4">
+                        Tem certeza que deseja <strong>@action.ToLower()</strong> o cargo <strong>@Model.Name</strong>?
+                    </div>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Nome</dt>
+                        <dd class="col-sm-8">@Model.Name</dd>
+
+                        <dt class="col-sm-4">Perigoso</dt>
+                        <dd class="col-sm-8">@(Model.IsHazard ? "Sim" : "Não")</dd>
+
+                        <dt class="col-sm-4">Insalubre</dt>
+                        <dd class="col-sm-8">@(Model.IsUnhealthy ? "Sim" : "Não")</dd>
+
+                        <dt class="col-sm-4">Comissionado</dt>
+                        <dd class="col-sm-8">@(Model.IsCommissioned ? "Sim" : "Não")</dd>
+
+                        <dt class="col-sm-4">Banco de Horas</dt>
+                        <dd class="col-sm-8">@(Model.IsTimeBank ? "Sim" : "Não")</dd>
+
+                        <dt class="col-sm-4">Horas Diárias</dt>
+                        <dd class="col-sm-8">@Model.DailyHours.ToString(@"hh\:mm")</dd>
+                    </dl>
+                </div>
+
+                <div class="card-footer bg-white d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                    <form asp-action="Delete" method="post" class="m-0">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn @(Model.IsActive ? "btn-danger" : "btn-success")">@action</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

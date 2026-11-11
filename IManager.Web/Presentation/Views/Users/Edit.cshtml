@@ -1,130 +1,135 @@
-﻿@using IManager.Web.Presentation.ViewModels.Departments
+@using IManager.Web.Presentation.ViewModels.Departments
 @model IManager.Web.Presentation.ViewModels.Account.EditAccountViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Usuário";
 
     var departments = ViewBag.Departments as IEnumerable<DepartmentHierarchyViewModel>;
+    var rolesAllowed = User.IsInRole(Role.Staff) ? Role.All : Role.AdminAllowed;
 }
 
-<h1>Editar Usuario</h1>
-
-<h4>UserProfile</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <input type="hidden" asp-for="CompanyId" />
-                    <label>Departamento</label>
-
-                    <select id="departmentSelect" asp-for="DepartmentId" class="form-control">
-
-                        @if (departments != null)
-                        {
-                            @foreach (var department in departments)
-                            {
-                                <option value="@department.Id"  
-                                        selected="@(department.Id == Model.DepartmentId ? "selected" : null)">
-                                    @department.Name
-                                </option>
-                            }
-                        }
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-                    <label>Cargo</label>
-
-                    <select id="jobTitleSelect" asp-for="JobTitleId" class="form-control">
-                    </select>
-
-                </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-500 small">
-                    Salário Base: <span class="text-danger">*</span>
-                </label>
-                <input type="text"
-                       id="salaryDisplay"
-                       class="form-control"
-                       placeholder="R$ 0,00"
-                       autocomplete="off" />
-                <input type="hidden" asp-for="BaseSalary" id="salaryHidden" />
-                <span asp-validation-for="BaseSalary" class="text-danger small"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="FullName" class="control-label">Nime Completo: <span class="text-danger">*</span></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="DocumentNumber" class="form-label fw-500 small">CPF: <span class="text-danger">*</span></label>
-                <input asp-for="DocumentNumber" id="cpf" class="form-control" inputmode="numeric" />
-                <span asp-validation-for="DocumentNumber" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="PhoneNumber" class="form-label fw-500 small">Telefone <span class="text-muted">(opcional)</span></label>
-                <input asp-for="PhoneNumber" id="phone" class="form-control" placeholder="(11) 99999-9999" />
-                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Email" class="control-label">Email: <span class="text-danger">*</span></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="BirthDate" class="form-label fw-500 small">Data de Nascimento: <span class="text-danger">*</span></label>
-                <input asp-for="BirthDate" class="form-control" type="date" />
-                <span asp-validation-for="BirthDate" class="text-danger small"></span>
-            </div>
-
-            <div class="mb-4">
-
-                <label class="form-label fw-500 small">Perfil de Acesso <span class="text-danger">*</span></label>
-
-                <div>
-                    @{
-                        var rolesAllowed = User.IsInRole(Role.Staff) ? Role.All : Role.AdminAllowed;
-                    }
-
-                    @foreach (var role in rolesAllowed)
-                    {
-                        <div class="form-check form-check-inline">
-
-                            <input class="form-check-input"
-                                   type="radio"
-                                   asp-for="Role"
-                                   value="@role"
-                                   id="role_@role" />
-
-                            <label class="form-check-label small" for="role_@role">@role</label>
-
-                        </div>
-                    }
-                </div>
-
-                <span asp-validation-for="Role" class="text-danger small"></span>
-
-            </div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Editar Usuário</h2>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CompanyId" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Dados Pessoais</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row mb-3">
+                    <label asp-for="FullName" class="col-sm-3 col-form-label">Nome Completo <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="DocumentNumber" class="col-sm-3 col-form-label">CPF <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="DocumentNumber" id="cpf" class="form-control" inputmode="numeric" />
+                        <span asp-validation-for="DocumentNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="BirthDate" class="col-sm-3 col-form-label">Data de Nascimento <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="BirthDate" class="form-control" type="date" />
+                        <span asp-validation-for="BirthDate" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="Email" class="col-sm-3 col-form-label">E-mail <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label asp-for="PhoneNumber" class="col-sm-3 col-form-label">Telefone <span class="text-muted small">(opcional)</span></label>
+                    <div class="col-sm-9">
+                        <input asp-for="PhoneNumber" id="phone" class="form-control" placeholder="(11) 99999-9999" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label class="col-sm-3 col-form-label">Perfil de Acesso <span class="text-danger">*</span></label>
+                    <div class="col-sm-9 pt-2">
+                        @foreach (var role in rolesAllowed)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" asp-for="Role" value="@role" id="role_@role" />
+                                <label class="form-check-label" for="role_@role">@role</label>
+                            </div>
+                        }
+                        <div><span asp-validation-for="Role" class="text-danger small"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Informações Profissionais</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row mb-3">
+                    <label for="departmentSelect" class="col-sm-3 col-form-label">Setor <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <select id="departmentSelect" asp-for="DepartmentId" class="form-select">
+                            @if (departments != null)
+                            {
+                                @foreach (var department in departments)
+                                {
+                                    <option value="@department.Id"
+                                            selected="@(department.Id == Model.DepartmentId ? "selected" : null)">
+                                        @department.Name
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label for="jobTitleSelect" class="col-sm-3 col-form-label">Cargo <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <select id="jobTitleSelect" asp-for="JobTitleId" class="form-select">
+                        </select>
+                        <span asp-validation-for="JobTitleId" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <label for="salaryDisplay" class="col-sm-3 col-form-label">Salário Base <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" id="salaryDisplay" class="form-control" placeholder="R$ 0,00" autocomplete="off" />
+                        <input type="hidden" asp-for="BaseSalary" id="salaryHidden" />
+                        <span asp-validation-for="BaseSalary" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

@@ -1,110 +1,88 @@
 ﻿@model DetailsDepartmentViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Setor";
 }
 
-<h1>Detalhes</h1>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Detalhes do Setor</h2>
+    </div>
 
-<div>
-    <h4>Setor</h4>
-    <hr />
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">@Model.Name</h5>
+        </div>
 
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+        <div class="card-body">
+            <dl class="row">
+                @if (User.IsInRole(Role.Staff))
+                {
+                    <dt class="col-sm-3">Empresa</dt>
+                    <dd class="col-sm-9">@Model.Company.TradeName</dd>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class="col-sm-10">
-            @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
-        </dd>
+                    <dt class="col-sm-3">Razão Social</dt>
+                    <dd class="col-sm-9">@Model.Company.LegalName</dd>
 
-        @if (User.IsInRole(Role.Staff))
-        {
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Company.TradeName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Company.TradeName)
-            </dd>
+                    <dt class="col-sm-3">CNPJ</dt>
+                    <dd class="col-sm-9">@MaskHelper.MaskCnpj(Model.Company.DocumentNumber)</dd>
+                }
 
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Company.LegalName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Company.LegalName)
-            </dd>
+                <dt class="col-sm-3">Nome</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
 
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Company.DocumentNumber)
-            </dt>
-            <dd class="col-sm-10">
-                @MaskHelper.MaskCnpj(Model.Company.DocumentNumber)
-            </dd>
-        }
-    </dl>
-</div>
+                <dt class="col-sm-3">Data de Cadastro</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
 
-<div class="mt-4">
-    <h4>Indicadores do Setor</h4>
-    <hr />
+                <dt class="col-sm-3">Situação</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
+                        @(Model.IsActive ? "Ativo" : "Inativo")
+                    </span>
+                </dd>
+            </dl>
+        </div>
+    </div>
 
-    <dl class="row">
-        <dt class="col-sm-4">
-            Total de cargos
-        </dt>
-        <dd class="col-sm-8">
-            @Model.Info.JobTitleCount
-        </dd>
+    <div class="card shadow-sm mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Informações do Setor</h5>
+        </div>
 
-        <dt class="col-sm-4">
-            Total de colaboradores
-        </dt>
-        <dd class="col-sm-8">
-            @Model.Info.EmployeeCount
-        </dd>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Total de Cargos</dt>
+                <dd class="col-sm-9">@Model.Info.JobTitleCount</dd>
 
-        <dt class="col-sm-4">
-            Salário médio
-        </dt>
-        <dd class="col-sm-8">
-            @Model.Info.AverageSalary.ToString("C")
-        </dd>
+                <dt class="col-sm-3">Total de Funcionários</dt>
+                <dd class="col-sm-9">@Model.Info.EmployeeCount</dd>
 
-        <dt class="col-sm-4">
-            Cargo mais comum
-        </dt>
-        <dd class="col-sm-8">
-            @(string.IsNullOrWhiteSpace(Model.Info.MostCommonJobTitle)
-                ? "-"
-                : Model.Info.MostCommonJobTitle)
-        </dd>
+                <dt class="col-sm-3">Salário Médio</dt>
+                <dd class="col-sm-9">@Model.Info.AverageSalary.ToString("C")</dd>
 
-        <dt class="col-sm-4">
-            Cargo com maior custo
-        </dt>
-        <dd class="col-sm-8">
-            @(string.IsNullOrWhiteSpace(Model.Info.HighestCostJobTitleName)
-                ? "-"
-                : Model.Info.HighestCostJobTitleName)
-        </dd>
+                <dt class="col-sm-3">Cargo Mais Comum</dt>
+                <dd class="col-sm-9">
+                    @(string.IsNullOrWhiteSpace(Model.Info.MostCommonJobTitle) ? "-" : Model.Info.MostCommonJobTitle)
+                </dd>
 
-        <dt class="col-sm-4">
-            Custo do cargo mais caro
-        </dt>
-        <dd class="col-sm-8">
-            @Model.Info.HighestCostJobTitleValue.ToString("C")
-        </dd>
-    </dl>
-</div>
+                <dt class="col-sm-3">Cargo com Maior Custo</dt>
+                <dd class="col-sm-9">
+                    @(string.IsNullOrWhiteSpace(Model.Info.HighestCostJobTitleName) ? "-" : Model.Info.HighestCostJobTitleName)
+                </dd>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
-    <a asp-action="Index">Back to List</a>
+                <dt class="col-sm-3">Custo do Cargo Mais Caro</dt>
+                <dd class="col-sm-9">@Model.Info.HighestCostJobTitleValue.ToString("C")</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            Editar
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Voltar
+        </a>
+    </div>
 </div>

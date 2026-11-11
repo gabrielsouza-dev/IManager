@@ -1,50 +1,49 @@
-﻿@model IManager.Web.Presentation.ViewModels.Companies.CompanyViewModel
+﻿@model CompanyViewModel
 
 @{
-    ViewData["Title"] = "Atualizar Empresa";
+    var action = Model.IsActive ? "Desativar" : "Ativar";
+    ViewData["Title"] = $"{action} Empresa";
 }
 
-<h1>@(Model.IsActive ? "Desativar" : "Ativar")</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">@action Empresa</h5>
+                </div>
 
-<h3>Você tem certeza que deseja @(Model.IsActive ? "Desativar" : "Ativar") este empresa?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            CNPJ:
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DocumentNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            Razão Social:
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LegalName)
-        </dd>
-        <dt class = "col-sm-2">
-            Nome Fantasia:
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TradeName)
-        </dd>
-        <dt class = "col-sm-2">
-            Data de Fundação:
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FoundedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            Data de Criação:
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="@(Model.IsActive ? "Desativar" : "Ativar")" class="btn btn-danger" /> |
-        <a asp-action="Index">Voltar</a>
-    </form>
+                <div class="card-body">
+                    <div class="alert @(Model.IsActive ? "alert-warning" : "alert-info") mb-4">
+                        Tem certeza que deseja <strong>@action.ToLower()</strong> a empresa <strong>@Model.TradeName</strong>?
+                    </div>
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">CNPJ</dt>
+                        <dd class="col-sm-8">@MaskHelper.MaskCnpj(Model.DocumentNumber)</dd>
+
+                        <dt class="col-sm-4">Razão Social</dt>
+                        <dd class="col-sm-8">@Model.LegalName</dd>
+
+                        <dt class="col-sm-4">Nome Fantasia</dt>
+                        <dd class="col-sm-8">@Model.TradeName</dd>
+
+                        <dt class="col-sm-4">Data de Fundação</dt>
+                        <dd class="col-sm-8">@Model.FoundedAt.ToString("dd/MM/yyyy")</dd>
+
+                        <dt class="col-sm-4">Data de Cadastro</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+
+                <div class="card-footer bg-white d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+                    <form asp-action="Delete" method="post" class="m-0">
+                        <input type="hidden" asp-for="Id" />
+                        <button type="submit" class="btn @(Model.IsActive ? "btn-danger" : "btn-success")">@action</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

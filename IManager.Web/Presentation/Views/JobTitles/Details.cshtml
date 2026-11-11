@@ -16,82 +16,42 @@
 
         <div class="card-body">
             <dl class="row">
-
                 @if (User.IsInRole(Role.Staff))
                 {
-                    <dt class="col-sm-3">
-                        @Html.DisplayNameFor(model => model.CompanyTradeName)
-                    </dt>
-                    <dd class="col-sm-9">
-                        @Html.DisplayFor(model => model.CompanyTradeName)
-                    </dd>
+                    <dt class="col-sm-3">Empresa</dt>
+                    <dd class="col-sm-9">@Model.CompanyTradeName</dd>
 
-                    <dt class="col-sm-3">
-                        @Html.DisplayNameFor(model => model.CompanyDocumentNumber)
-                    </dt>
-                    <dd class="col-sm-9">
-                        @Html.DisplayFor(model => model.CompanyDocumentNumber)
-                    </dd>
+                    <dt class="col-sm-3">CNPJ</dt>
+                    <dd class="col-sm-9">@MaskHelper.MaskCnpj(Model.CompanyDocumentNumber)</dd>
                 }
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.DepartmentName)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.DepartmentName)
-                </dd>
+                <dt class="col-sm-3">Setor</dt>
+                <dd class="col-sm-9">@Model.DepartmentName</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Name)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Name)
-                </dd>
+                <dt class="col-sm-3">Nome</dt>
+                <dd class="col-sm-9">@Model.Name</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.IsHazard)
-                </dt>
-                <dd class="col-sm-9">
-                    @(Model.IsHazard ? "Sim" : "Não")
-                </dd>
+                <dt class="col-sm-3">Perigoso</dt>
+                <dd class="col-sm-9">@(Model.IsHazard ? "Sim" : "Não")</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.IsUnhealthy)
-                </dt>
-                <dd class="col-sm-9">
-                    @(Model.IsUnhealthy ? "Sim" : "Não")
-                </dd>
+                <dt class="col-sm-3">Insalubre</dt>
+                <dd class="col-sm-9">@(Model.IsUnhealthy ? "Sim" : "Não")</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.IsCommissioned)
-                </dt>
-                <dd class="col-sm-9">
-                    @(Model.IsCommissioned ? "Sim" : "Não")
-                </dd>
+                <dt class="col-sm-3">Comissionado</dt>
+                <dd class="col-sm-9">@(Model.IsCommissioned ? "Sim" : "Não")</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.IsTimeBank)
-                </dt>
-                <dd class="col-sm-9">
-                    @(Model.IsTimeBank ? "Sim" : "Não")
-                </dd>
+                <dt class="col-sm-3">Banco de Horas</dt>
+                <dd class="col-sm-9">@(Model.IsTimeBank ? "Sim" : "Não")</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.DailyHours)
-                </dt>
-                <dd class="col-sm-9">
-                    @Model.DailyHours.ToString(@"hh\:mm")
-                </dd>
+                <dt class="col-sm-3">Horas Diárias</dt>
+                <dd class="col-sm-9">@Model.DailyHours.ToString(@"hh\:mm")</dd>
 
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.IsActive)
-                </dt>
+                <dt class="col-sm-3">Situação</dt>
                 <dd class="col-sm-9">
                     <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
                         @(Model.IsActive ? "Ativo" : "Inativo")
                     </span>
                 </dd>
-
             </dl>
         </div>
     </div>
@@ -103,28 +63,14 @@
 
         <div class="card-body">
             <dl class="row">
+                <dt class="col-sm-3">Quantidade de Funcionários</dt>
+                <dd class="col-sm-9">@Model.Info.EmployeeCount</dd>
 
-                <dt class="col-sm-3">
-                    Quantidade de Funcionários
-                </dt>
-                <dd class="col-sm-9">
-                    @Model.Info.EmployeeCount
-                </dd>
+                <dt class="col-sm-3">Salário Médio</dt>
+                <dd class="col-sm-9">@Model.Info.AverageSalary.ToString("C")</dd>
 
-                <dt class="col-sm-3">
-                    Salário Médio
-                </dt>
-                <dd class="col-sm-9">
-                    @Model.Info.AverageSalary.ToString("C")
-                </dd>
-
-                <dt class="col-sm-3">
-                    Custo Total
-                </dt>
-                <dd class="col-sm-9">
-                    @Model.Info.TotalCost.ToString("C")
-                </dd>
-
+                <dt class="col-sm-3">Custo Total</dt>
+                <dd class="col-sm-9">@Model.Info.TotalCost.ToString("C")</dd>
             </dl>
         </div>
     </div>
