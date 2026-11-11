@@ -4,7 +4,7 @@ using IManager.Web.Shared.Helpers;
 
 namespace IManager.Web.Presentation.ViewModels.TimeEntries;
 
-public class TimeEntryAudict
+public class TimeEntryAudit
 {
     public Guid Id { get; set; }
     public Guid EmployeeId { get; set; }

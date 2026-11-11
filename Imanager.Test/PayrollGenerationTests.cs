@@ -17,7 +17,7 @@ public class PayrollGenerationTests
     private readonly ITestOutputHelper _output;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IUserProfilesRepository> _userProfileRepositoryMock;
-    private readonly Mock<ITimeEntryRepository> _timeEntryRepositoryMock;
+    private readonly Mock<ITimeEntriesRepository> _timeEntryRepositoryMock;
     private readonly Mock<IPayrollsRepository> _payrollRepositoryMock;
     private readonly Mock<IPayslipsRepository> _PayslipsRepositoryMock;
     private readonly Mock<ILogger<PayrollGenerationService>> _loggerMock;
@@ -27,7 +27,7 @@ public class PayrollGenerationTests
         _output = output;
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _userProfileRepositoryMock = new Mock<IUserProfilesRepository>();
-        _timeEntryRepositoryMock = new Mock<ITimeEntryRepository>();
+        _timeEntryRepositoryMock = new Mock<ITimeEntriesRepository>();
         _payrollRepositoryMock = new Mock<IPayrollsRepository>();
         _PayslipsRepositoryMock = new Mock<IPayslipsRepository>();
         _loggerMock = new Mock<ILogger<PayrollGenerationService>>();

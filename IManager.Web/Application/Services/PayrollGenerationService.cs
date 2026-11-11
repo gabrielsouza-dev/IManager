@@ -15,14 +15,14 @@ public class PayrollGenerationService : IPayrollGenerationService
 {
     private readonly IPayrollsRepository _payrollsRepository;
     private readonly IPayslipsRepository _payslipsRepository;
-    private readonly ITimeEntryRepository _timeEntryRepository;
+    private readonly ITimeEntriesRepository _timeEntryRepository;
     private readonly IUserProfilesRepository _userProfilesRepository;
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<PayrollGenerationService> _logger;
 
     public PayrollGenerationService(IPayrollsRepository payrollsRepository, IPayslipsRepository payslipsRepository, 
-        ITimeEntryRepository timeEntryRepository, IUserProfilesRepository userProfilesRepository, 
+        ITimeEntriesRepository timeEntryRepository, IUserProfilesRepository userProfilesRepository, 
         IUnitOfWork unitOfWork, ILogger<PayrollGenerationService> logger)
     {
         _payrollsRepository = payrollsRepository;

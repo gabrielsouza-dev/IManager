@@ -26,7 +26,7 @@ public class JobTitleService : IJobTitleService
         _logger = logger;
     }
 
-    public async Task<Result> CreateAsync(CreateJobTitleModelView model)
+    public async Task<Result> CreateAsync(CreateJobTitleViewModel model)
     {
         var entity = _mapper.Map<JobTitle>(model);
 
@@ -65,12 +65,12 @@ public class JobTitleService : IJobTitleService
         return Result.Ok();
     }
 
-    public async Task<DetailsJobTitleModelView?> GetDetailsModelViewById(Guid id)
+    public async Task<DetailsJobTitleViewModel?> GetDetailsModelViewById(Guid id)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(id, q => q.Include(j => j.Department).ThenInclude(d=>d.Company));
         if (entity == null) return null;
 
-        var model = _mapper.Map<DetailsJobTitleModelView>(entity);
+        var model = _mapper.Map<DetailsJobTitleViewModel>(entity);
         var info = await _jobTitleRepository.GetInfoByIdAsync(id);
         if(info == null) return null;
         model.Info = info;
@@ -78,22 +78,22 @@ public class JobTitleService : IJobTitleService
         return model;
     }
 
-    public async Task<EditJobTitleModelView?> GetEditModelViewByIdAsync(Guid id)
+    public async Task<EditJobTitleViewModel?> GetEditModelViewByIdAsync(Guid id)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(id);
         if (entity == null) return null;
 
-        return _mapper.Map<EditJobTitleModelView?>(entity);
+        return _mapper.Map<EditJobTitleViewModel?>(entity);
     }
 
-    public async Task<JobTitleModelView?> GetModelViewByIdAsync(Guid id)
+    public async Task<JobTitleViewModel?> GetModelViewByIdAsync(Guid id)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(id);
 
-        return _mapper.Map<JobTitleModelView?>(entity);
+        return _mapper.Map<JobTitleViewModel?>(entity);
     }
 
-    public async Task<PagedResult<IndexJobTitleModelView>> GetPagedAsync(string search, ActiveFilter active, int page, int pageSize, Guid? companyId = null)
+    public async Task<PagedResult<IndexJobTitleViewModel>> GetPagedAsync(string search, ActiveFilter active, int page, int pageSize, Guid? companyId = null)
     {
         Func<IQueryable<JobTitle>, IQueryable<JobTitle>> query = q =>
         {
@@ -134,9 +134,9 @@ public class JobTitleService : IJobTitleService
 
         var totalCount = await _jobTitleRepository.CountAsync(query);
 
-        IEnumerable<IndexJobTitleModelView> indexModelView = await _jobTitleRepository.GetPagedAsync(query, page, pageSize);
+        IEnumerable<IndexJobTitleViewModel> indexModelView = await _jobTitleRepository.GetPagedAsync(query, page, pageSize);
 
-        var pagedViewModel = new PagedResult<IndexJobTitleModelView>()
+        var pagedViewModel = new PagedResult<IndexJobTitleViewModel>()
         {
             Items = indexModelView,
             Page = page,
@@ -149,7 +149,7 @@ public class JobTitleService : IJobTitleService
         return pagedViewModel;
     }
 
-    public async Task<Result> UpdateAsync(EditJobTitleModelView model)
+    public async Task<Result> UpdateAsync(EditJobTitleViewModel model)
     {
         var entity = await _jobTitleRepository.GetByIdAsync(model.Id);
         if (entity == null) throw new ArgumentException("Erro ao atualizar dados de cargo.");

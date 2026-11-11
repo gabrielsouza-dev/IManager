@@ -38,7 +38,7 @@ public class JobTitlesRepository : Repository<JobTitle>, IJobTitlesRepository
         return result;
     }
 
-    public async Task<IEnumerable<IndexJobTitleModelView>> GetPagedAsync(Func<IQueryable<JobTitle>, IQueryable<JobTitle>> query, int page, int pageSize)
+    public async Task<IEnumerable<IndexJobTitleViewModel>> GetPagedAsync(Func<IQueryable<JobTitle>, IQueryable<JobTitle>> query, int page, int pageSize)
     {
         IQueryable<JobTitle> dbset = _dbSet;
 
@@ -50,7 +50,7 @@ public class JobTitlesRepository : Repository<JobTitle>, IJobTitlesRepository
             .Skip((page - 1) * pageSize)
             .Take(pageSize);
 
-        var result = await dbset.Select(c => new IndexJobTitleModelView()
+        var result = await dbset.Select(c => new IndexJobTitleViewModel()
         {
             Id = c.Id,
             Name = c.Name,

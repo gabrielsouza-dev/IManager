@@ -14,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 namespace IManager.Web.Data.Repositories;
 
-public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
+public class TimeEntriesRepository : Repository<TimeEntry>, ITimeEntriesRepository
 {
-    public TimeEntryRepository(ApplicationDbContext context) : base(context) { }
+    public TimeEntriesRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<TimeEntryAudict>> GetAudictoryHistory(Guid companyId, DateOnly date)
+    public async Task<IEnumerable<TimeEntryAudit>> GetAudictoryHistory(Guid companyId, DateOnly date)
     {
         return await _dbSet
             .Where(t => 
@@ -28,7 +28,7 @@ public class TimeEntryRepository : Repository<TimeEntry>, ITimeEntryRepository
                 t.Status != TimeEntryStatus.Pending &&
                 t.Date.Month == date.Month &&
                 t.Date.Year == date.Year)
-            .Select(t => new TimeEntryAudict
+            .Select(t => new TimeEntryAudit
             {
                 Id = t.Id,
                 EmployeeName = t.Employee.FullName,

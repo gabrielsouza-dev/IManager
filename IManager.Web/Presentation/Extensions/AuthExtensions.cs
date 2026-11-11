@@ -58,10 +58,10 @@ public static class AuthExtensions
 
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy(Poly.StaffOrAdmin, policy =>
+            options.AddPolicy(Policies.StaffOrAdmin, policy =>
                 policy.RequireRole(Role.Staff, Role.Admin));
 
-            options.AddPolicy(Poly.AdminOrUser, policy =>
+            options.AddPolicy(Policies.AdminOrUser, policy =>
                 policy.RequireRole(Role.Admin, Role.User));
         });
 

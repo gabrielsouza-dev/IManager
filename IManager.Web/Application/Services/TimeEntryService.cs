@@ -11,21 +11,21 @@ using Microsoft.EntityFrameworkCore;
 namespace IManager.Web.Application.Services;
 public class TimeEntryService : ITimeEntryService
 {
-    private readonly ITimeEntryRepository _timeEntryRepository;
+    private readonly ITimeEntriesRepository _timeEntryRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<TimeEntryService> _logger;
 
-    public TimeEntryService(ITimeEntryRepository timeEntryRepository, IUnitOfWork unitOfWork, ILogger<TimeEntryService> logger)
+    public TimeEntryService(ITimeEntriesRepository timeEntryRepository, IUnitOfWork unitOfWork, ILogger<TimeEntryService> logger)
     {
         _timeEntryRepository = timeEntryRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
-    public async Task<IEnumerable<TimeEntryAudict>> GetAllAudictViewModel(Guid companyId, DateOnly date)
+    public async Task<IEnumerable<TimeEntryAudit>> GetAllAudictViewModel(Guid companyId, DateOnly date)
     {
         if (companyId == Guid.Empty)
-            return Enumerable.Empty<TimeEntryAudict>();
+            return Enumerable.Empty<TimeEntryAudit>();
 
         var model = await _timeEntryRepository.GetAudictoryHistory(companyId, date);
         return model;

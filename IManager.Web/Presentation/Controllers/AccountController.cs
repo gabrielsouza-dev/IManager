@@ -26,7 +26,7 @@ public class AccountController : Controller
 
     #region Registro e Confirmação de E-mail
 
-    [Authorize(Policy = Poly.StaffOrAdmin)]
+    [Authorize(Policy = Policies.StaffOrAdmin)]
     [HttpGet]
     public async Task<IActionResult> Register()
     {
@@ -36,7 +36,7 @@ public class AccountController : Controller
         return View(model);
     }
 
-    [Authorize(Policy = Poly.StaffOrAdmin)]
+    [Authorize(Policy = Policies.StaffOrAdmin)]
     [HttpPost]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
@@ -93,7 +93,7 @@ public class AccountController : Controller
         }
     }
 
-    [Authorize(Policy = Poly.StaffOrAdmin)]
+    [Authorize(Policy = Policies.StaffOrAdmin)]
     [HttpGet]
     public IActionResult EmailConfirmationPending() => View();
 

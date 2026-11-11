@@ -6,5 +6,5 @@ public class DepartmentHierarchyViewModel
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public IEnumerable<JobTitleModelView> JobTitles { get; set; } = new List<JobTitleModelView>();
+    public IEnumerable<JobTitleViewModel> JobTitles { get; set; } = new List<JobTitleViewModel>();
 }

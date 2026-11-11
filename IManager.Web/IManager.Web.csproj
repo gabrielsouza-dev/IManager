@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.Exemple.json" />
+    <None Include="appsettings.Example.json" />
   </ItemGroup>
 
   <ItemGroup>

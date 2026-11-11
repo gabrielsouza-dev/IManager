@@ -10,6 +10,6 @@ public class IndexUserViewModel
     public string DocumentNumber { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
-    public JobTitleHierarchyModelView JobTitle { get; set; } = null!;
+    public JobTitleHierarchyViewModel JobTitle { get; set; } = null!;
     public bool IsActive { get; set; }
 }

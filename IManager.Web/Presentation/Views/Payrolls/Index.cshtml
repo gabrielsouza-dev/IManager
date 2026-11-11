@@ -53,7 +53,7 @@
     }
 
     function fetchPayrollPending(selectedDate) {
-        fetch(`/Payrolls/_payrollPendingTable?competenceDate=${selectedDate}`)
+        fetch(`/Payrolls/_PayrollPendingTable?competenceDate=${selectedDate}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -64,7 +64,7 @@
     }
 
     function fetchPayrollProcessed(selectedDate) {
-        fetch(`/Payrolls/_payrollProcessedTable?competenceDate=${selectedDate}`)
+        fetch(`/Payrolls/_PayrollProcessedTable?competenceDate=${selectedDate}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;

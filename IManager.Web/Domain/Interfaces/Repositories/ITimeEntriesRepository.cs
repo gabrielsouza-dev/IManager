@@ -6,10 +6,10 @@ using IManager.Web.Presentation.ViewModels.TimeEntries;
 
 namespace IManager.Web.Domain.Interfaces.Repositories;
 
-public interface ITimeEntryRepository : IRepository<TimeEntry>
+public interface ITimeEntriesRepository : IRepository<TimeEntry>
 {
     Task<IEnumerable<TimeEntryPending>> GetAllPendingViewModel(Guid companyId, DateOnly date);
-    Task<IEnumerable<TimeEntryAudict>> GetAudictoryHistory(Guid companyId, DateOnly date);
+    Task<IEnumerable<TimeEntryAudit>> GetAudictoryHistory(Guid companyId, DateOnly date);
     Task<IEnumerable<DateOnly>> GetPendentDateTimeEntry(Guid companyId);
     Task<IEnumerable<DateOnly>> GetPayrollCompetencesAsync(Guid companyId);
     Task<IEnumerable<PayrollViewModel>> GetPendingPayrollsAsync(Guid companyId, DateOnly competenceDate);

@@ -4,9 +4,9 @@ using IManager.Web.Presentation.ViewModels.JobTitles;
 
 namespace IManager.Web.Presentation.Validators.JobTitles;
 
-public class CreateJobTitleModelViewValidator : AbstractValidator<CreateJobTitleModelView>
+public class CreateJobTitleViewModelValidator : AbstractValidator<CreateJobTitleViewModel>
 {
-    public CreateJobTitleModelViewValidator()
+    public CreateJobTitleViewModelValidator()
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("O Nome do cargo é obrigatorio.");

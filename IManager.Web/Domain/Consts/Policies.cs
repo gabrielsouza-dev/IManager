@@ -1,6 +1,6 @@
 ﻿namespace IManager.Web.Domain.Consts;
 
-public static class Poly
+public static class Policies
 {
     public const string AdminOrUser = "AdminOrUser";
     public const string StaffOrAdmin = "StaffOrAdmin";

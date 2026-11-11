@@ -44,8 +44,8 @@
         tableContainer.innerHTML = null;
     }
 
-    function fetchTimeEntryAudict(selectedDate) {
-        fetch(`/TimeEntries/_timeEntryAudictTable?date=${selectedDate}`)
+    function fetchTimeEntryAudit(selectedDate) {
+        fetch(`/TimeEntries/_TimeEntryAuditTable?date=${selectedDate}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -55,7 +55,7 @@
 
     function fetchTimeEntryPending(selectedDate) {
 
-        fetch(`/TimeEntries/_timeEntryPendentTable?date=${selectedDate}`)
+        fetch(`/TimeEntries/_TimeEntryPendingTable?date=${selectedDate}`)
             .then(response => response.text())
             .then(html => {
                 tableContainer.innerHTML = html;
@@ -74,7 +74,7 @@
             if (pending.checked) {
                 fetchTimeEntryPending(selectedDate);
             } else if (approved.checked) {
-                fetchTimeEntryAudict(selectedDate);
+                fetchTimeEntryAudit(selectedDate);
             }
         }
     });

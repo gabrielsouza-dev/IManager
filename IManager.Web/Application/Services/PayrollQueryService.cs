@@ -15,10 +15,10 @@ namespace IManager.Web.Application.Services;
 
 public class PayrollQueryService : IPayrollQueryService
 {
-    private readonly ITimeEntryRepository _timeEntryRepository;
+    private readonly ITimeEntriesRepository _timeEntryRepository;
     private readonly IPayslipsRepository _payslipRepository;
 
-    public PayrollQueryService(ITimeEntryRepository timeEntryRepository, IPayslipsRepository payslipRepository)
+    public PayrollQueryService(ITimeEntriesRepository timeEntryRepository, IPayslipsRepository payslipRepository)
     {
         _timeEntryRepository = timeEntryRepository;
         _payslipRepository = payslipRepository;

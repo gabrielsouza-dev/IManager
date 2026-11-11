@@ -12,7 +12,7 @@ public static class RepositoryExtensions
         builder.Services.AddScoped<IJobTitlesRepository, JobTitlesRepository>();
         builder.Services.AddScoped<ICompaniesRepository, CompaniesRepository>();
         builder.Services.AddScoped<IDepartmentsRepository, DepartmentsRepository>();
-        builder.Services.AddScoped<ITimeEntryRepository, TimeEntryRepository>();
+        builder.Services.AddScoped<ITimeEntriesRepository, TimeEntriesRepository>();
         builder.Services.AddScoped<IPayrollsRepository, PayrollsRepository>();
         builder.Services.AddScoped<IPayslipsRepository, PayslipsRepository>();
     }

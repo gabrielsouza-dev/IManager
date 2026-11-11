@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IManager.Web.Presentation.Controllers;
 
-[Authorize(Policy = Poly.StaffOrAdmin)]
+[Authorize(Policy = Policies.StaffOrAdmin)]
 public class UsersController : Controller
 {
     private readonly IAccountService _accountService;

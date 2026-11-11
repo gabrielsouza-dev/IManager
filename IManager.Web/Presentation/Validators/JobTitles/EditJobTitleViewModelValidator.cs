@@ -3,9 +3,9 @@ using IManager.Web.Presentation.ViewModels.JobTitles;
 
 namespace IManager.Web.Presentation.Validators.JobTitles;
 
-public class EditJobTitleModelViewValidator : AbstractValidator<EditJobTitleModelView>
+public class EditJobTitleViewModelValidator : AbstractValidator<EditJobTitleViewModel>
 {
-    public EditJobTitleModelViewValidator()
+    public EditJobTitleViewModelValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty()

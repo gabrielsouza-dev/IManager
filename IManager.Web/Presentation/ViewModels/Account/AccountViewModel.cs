@@ -11,7 +11,7 @@ public class AccountViewModel
     public DateOnly BirthDate { get; set; }
     public string? PhoneNumber { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
-    public JobTitleHierarchyModelView JobTitle { get; set; } = null!;
+    public JobTitleHierarchyViewModel JobTitle { get; set; } = null!;
     public decimal BaseSalary { get; set; } = 0m;
     public bool IsActive { get; set; }
 }

@@ -6,6 +6,6 @@ namespace IManager.Web.Domain.Interfaces.Repositories
     public interface IJobTitlesRepository : IRepository<JobTitle>
     {
         Task<InfoJobTitleViewModel?> GetInfoByIdAsync(Guid id);
-        Task<IEnumerable<IndexJobTitleModelView>> GetPagedAsync(Func<IQueryable<JobTitle>, IQueryable<JobTitle>> query, int page, int pageSize);
+        Task<IEnumerable<IndexJobTitleViewModel>> GetPagedAsync(Func<IQueryable<JobTitle>, IQueryable<JobTitle>> query, int page, int pageSize);
     }
 }

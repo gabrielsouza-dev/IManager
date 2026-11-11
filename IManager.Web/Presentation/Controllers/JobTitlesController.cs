@@ -7,7 +7,7 @@ using Result = IManager.Web.Shared.Result;
 
 namespace IManager.Web.Presentation.Controllers;
 
-[Authorize(Policy = Poly.StaffOrAdmin)]
+[Authorize(Policy = Policies.StaffOrAdmin)]
 public class JobTitlesController : Controller
 {
     private readonly  IJobTitleService _jobTitleService;
@@ -24,7 +24,7 @@ public class JobTitlesController : Controller
     // GET: JobTitles
     public async Task<IActionResult> Index([FromQuery] string search, [FromQuery] ActiveFilter active = ActiveFilter.Active, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
     {
-        PagedResult<IndexJobTitleModelView> model;
+        PagedResult<IndexJobTitleViewModel> model;
         if (User.IsInRole(Role.Staff))
         {
             model = await _jobTitleService.GetPagedAsync(search, active, page, pageSize);
@@ -52,7 +52,7 @@ public class JobTitlesController : Controller
     // GET: JobTitles/Create
     public async Task<IActionResult> Create()
     {
-        var model = new CreateJobTitleModelView();
+        var model = new CreateJobTitleViewModel();
         await AddViewBagHierarchyViewModel(model);
 
         return View(model);
@@ -60,7 +60,7 @@ public class JobTitlesController : Controller
 
     // POST: JobTitles/Create
     [HttpPost]
-    public async Task<IActionResult> Create(CreateJobTitleModelView model)
+    public async Task<IActionResult> Create(CreateJobTitleViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -95,7 +95,7 @@ public class JobTitlesController : Controller
 
     // POST: JobTitles/Edit/5
     [HttpPost]
-    public async Task<IActionResult> Edit(Guid id, EditJobTitleModelView model)
+    public async Task<IActionResult> Edit(Guid id, EditJobTitleViewModel model)
     {
         if (id != model.Id) return NotFound();
 
@@ -142,7 +142,7 @@ public class JobTitlesController : Controller
     }
 
     #region Helpers
-    private async Task AddViewBagHierarchyViewModel(CreateJobTitleModelView model)
+    private async Task AddViewBagHierarchyViewModel(CreateJobTitleViewModel model)
     {
         if (User.IsInRole(Role.Staff))
             ViewBag.Companies = await _companiesService.GetCompaniesHierarchyViewModelAsync();

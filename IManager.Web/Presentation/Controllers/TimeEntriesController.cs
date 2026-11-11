@@ -29,7 +29,7 @@ public class TimeEntriesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> _timeEntryPendentTable(DateOnly date)
+    public async Task<IActionResult> _TimeEntryPendingTable(DateOnly date)
     {
         var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
@@ -38,11 +38,11 @@ public class TimeEntriesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> _timeEntryAudictTable(DateOnly date)
+    public async Task<IActionResult> _TimeEntryAuditTable(DateOnly date)
     {
         var companyId = Guid.Parse(User.FindFirst("CompanyId")!.Value);
 
-        IEnumerable<TimeEntryAudict> model = await _timeEntryService.GetAllAudictViewModel(companyId, date);
+        IEnumerable<TimeEntryAudit> model = await _timeEntryService.GetAllAudictViewModel(companyId, date);
         return PartialView(model);
     }
 
