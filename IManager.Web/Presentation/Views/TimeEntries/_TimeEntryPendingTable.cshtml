@@ -1,15 +1,15 @@
 ﻿@model PagedResult<TimeEntryPending>
 
-<table class="table table-striped">
-    <thead>
+<table class="table table-hover align-middle">
+    <thead class="table-light">
         <tr>
             <th>Funcionário</th>
             <th class="text-center">Data</th>
-            <th class="text-center">Checks</th>
+            <th class="text-center">Batidas</th>
             <th class="text-center">Total</th>
-            <th class="text-center">Status</th>
+            <th class="text-center">Situação</th>
             <th class="text-center">Consistente</th>
-            <th>Criado em</th>
+            <th>Solicitado em</th>
             <th></th>
             <th></th>
         </tr>
@@ -19,7 +19,7 @@
         @if (!Model.Items.Any())
         {
             <tr>
-                <td colspan="10" class="text-center">Nenhum ajuste de ponto pendente.</td>
+                <td colspan="9" class="text-center">Nenhum ajuste de ponto pendente.</td>
             </tr>
         }
 
@@ -40,8 +40,8 @@
                 <td class="text-center">@timeEntry.Date.ToString("dd/MM/yyyy")</td>
                 <td class="text-center">@newChecks</td>
                 <td class="text-center">@timeEntry.HoursWorked.ToString(@"hh\:mm")</td>
-                <td class="text-center">@timeEntry.Status</td>
-                <td class="text-center">@(timeEntry.IsConsistent ? "✔" : "✖")</td>
+                <td class="text-center"><span class="badge bg-warning text-dark">@timeEntry.Status.ToDisplayName()</span></td>
+                <td class="text-center">@(timeEntry.IsConsistent ? "✅" : "❌")</td>
                 <td>@timeEntry.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
 
                 <td>

@@ -1,69 +1,37 @@
 ﻿@model PagedResult<ProcessedPayrollViewModel>
 
-<table class="table">
-    <thead>
+<table class="table table-hover align-middle">
+    <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.EmployeeName)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.EmployeeDepartment)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.EmployeeJobtitle)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.GrossSalary)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.NetSalary)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.RegularSalary)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.TotalExtraEarnings)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((ProcessedPayrollViewModel m) => m.TotalDeductions)
-            </th>
+            <th>Funcionário</th>
+            <th>Setor</th>
+            <th>Cargo</th>
+            <th class="text-end">Salário Bruto</th>
+            <th class="text-end">Salário Líquido</th>
+            <th class="text-end">Salário Regular</th>
+            <th class="text-end">Adicionais</th>
+            <th class="text-end">Descontos</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Items.Any())
         {
             <tr>
-                <td colspan="9" class="text-center">Nenhuma folha processada.</td>
+                <td colspan="8" class="text-center">Nenhuma folha processada.</td>
             </tr>
         }
 
         @foreach (var item in Model.Items)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmployeeName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmployeeDepartment)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmployeeJobtitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.GrossSalary)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NetSalary)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RegularSalary)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalExtraEarnings)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TotalDeductions)
-                </td>
+                <td>@item.EmployeeName</td>
+                <td>@item.EmployeeDepartment</td>
+                <td>@item.EmployeeJobtitle</td>
+                <td class="text-end">@MaskHelper.MaskCurrency(item.GrossSalary)</td>
+                <td class="text-end">@MaskHelper.MaskCurrency(item.NetSalary)</td>
+                <td class="text-end">@MaskHelper.MaskCurrency(item.RegularSalary)</td>
+                <td class="text-end">@MaskHelper.MaskCurrency(item.TotalExtraEarnings)</td>
+                <td class="text-end">@MaskHelper.MaskCurrency(item.TotalDeductions)</td>
             </tr>
         }
     </tbody>

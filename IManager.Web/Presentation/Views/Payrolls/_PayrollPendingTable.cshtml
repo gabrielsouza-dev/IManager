@@ -1,29 +1,15 @@
 ﻿@model PagedResult<PayrollViewModel>
 
-<table class="table">
-    <thead>
+<table class="table table-hover align-middle">
+    <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.EmployeeName)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.Competence)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.PeriodStart)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.PeriodEnd)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.TimeEntry.HoursWorked)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.TimeEntry.DaysWorked)
-            </th>
-            <th>
-                @Html.DisplayNameForInnerType((PayrollViewModel m) => m.TimeEntry.IsConsistent)
-            </th>
+            <th>Funcionário</th>
+            <th class="text-center">Competência</th>
+            <th class="text-center">Início do Período</th>
+            <th class="text-center">Fim do Período</th>
+            <th class="text-center">Horas Trabalhadas</th>
+            <th class="text-center">Dias Trabalhados</th>
+            <th class="text-center">Consistente</th>
             <th></th>
         </tr>
     </thead>
@@ -31,45 +17,35 @@
         @if (!Model.Items.Any())
         {
             <tr>
-                <td colspan="10" class="text-center">Nenhuma folha de ponto pendente.</td>
+                <td colspan="8" class="text-center">Nenhuma folha de ponto pendente.</td>
             </tr>
         }
-@foreach (var item in Model.Items) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeeName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Competence)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PeriodStart)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PeriodEnd)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEntry.HoursWorked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEntry.DaysWorked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeEntry.IsConsistent)
-            </td>
-            <td>
-                <button id="process-btn" type="button" class="btn btn-outline-primary btn-sm"
-                        data-employee-id='@item.EmployeeId.ToString()'
-                        data-employee-name="@item.EmployeeName"
-                        data-competence-date="@item.Competence.ToString("yyyy-MM-dd")"
-                        data-hours-worked="@item.TimeEntry.HoursWorked"
-                        data-days-worked="@item.TimeEntry.DaysWorked"
-                        data-is-consistent="@item.TimeEntry.IsConsistent">
-                    Processar
-                </button>
-            </td>
-        </tr>
-}
+
+        @foreach (var item in Model.Items)
+        {
+            var hoursWorked = $"{(int)item.TimeEntry.HoursWorked.TotalHours:00}:{item.TimeEntry.HoursWorked.Minutes:00}";
+
+            <tr>
+                <td>@item.EmployeeName</td>
+                <td class="text-center">@item.Competence.ToString("MM/yyyy")</td>
+                <td class="text-center">@item.PeriodStart.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">@item.PeriodEnd.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">@hoursWorked</td>
+                <td class="text-center">@item.TimeEntry.DaysWorked</td>
+                <td class="text-center">@(item.TimeEntry.IsConsistent ? "✅" : "❌")</td>
+                <td class="text-end">
+                    <button id="process-btn" type="button" class="btn btn-outline-primary btn-sm"
+                            data-employee-id='@item.EmployeeId.ToString()'
+                            data-employee-name="@item.EmployeeName"
+                            data-competence-date="@item.Competence.ToString("yyyy-MM-dd")"
+                            data-hours-worked="@hoursWorked"
+                            data-days-worked="@item.TimeEntry.DaysWorked"
+                            data-is-consistent="@(item.TimeEntry.IsConsistent ? "Sim" : "Não")">
+                        Processar
+                    </button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
