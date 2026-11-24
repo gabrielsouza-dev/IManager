@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: dotnet restore Imanager.Test/Imanager.Test.csproj
+
+      - name: Build web app
+        run: dotnet build IManager.Web/IManager.Web.csproj --no-restore
+
+      - name: Build and test
+        run: dotnet test Imanager.Test/Imanager.Test.csproj --no-restore
