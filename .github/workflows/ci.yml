@@ -92,9 +92,10 @@ jobs:
       # A porta só abre depois do app.Initialize() (migrations + seed), então responder = seed concluído.
       - name: Start app and wait for it
         run: |
-          dotnet run --project IManager.Web/IManager.Web.csproj --no-build > app.log 2>&1 &
+          # --no-launch-profile: senão o launchSettings.json sobrescreve URL (5214) e ambiente (Development)
+          dotnet run --project IManager.Web/IManager.Web.csproj --no-build --no-launch-profile > app.log 2>&1 &
           echo $! > app.pid
-          for i in $(seq 1 180); do
+          for i in $(seq 1 300); do
             if ! kill -0 "$(cat app.pid)" 2>/dev/null; then
               echo "::error::A aplicação encerrou durante a inicialização"; exit 1
             fi
