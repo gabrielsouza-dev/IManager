@@ -29,3 +29,94 @@ jobs:
 
       - name: Build and test
         run: dotnet test Imanager.Test/Imanager.Test.csproj --no-restore
+
+  # Smoke test: sobe a aplicação contra um Postgres vazio (migrations + seed DEMO + folhas)
+  # e confere se ela responde. O banco é descartado ao fim do job; os valores abaixo são fictícios.
+  smoke:
+    needs: build-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: imanager
+          POSTGRES_USER: imanager-ci
+          POSTGRES_PASSWORD: ci-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U imanager-ci -d imanager"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://localhost:8080
+      POSTGRES__NAME: imanager
+      POSTGRES__USER: imanager-ci
+      POSTGRES__PASSWORD: ci-password
+      POSTGRES__HOST: localhost
+      POSTGRES__PORT: 5432
+      DemoProfiles__Company__TradeName: CI Company
+      DemoProfiles__Company__DocumentNumber: 29108745000150
+      DemoProfiles__Users__Staff__Email: staff@ci.local
+      DemoProfiles__Users__Staff__Password: Staff@Ci123
+      DemoProfiles__Users__Staff__FullName: CI Staff
+      DemoProfiles__Users__Staff__DocumentNumber: 64429898014
+      Email__Host: localhost
+      Email__Port: 2525
+      Email__Username: ci@ci.local
+      Email__Password: ci-password
+      Email__FromName: IManager CI
+      Email__FromEmail: noreply@ci.local
+      Jwt__Key: ci-only-jwt-key-not-secret-0123456789abcdef
+      Jwt__Issuer: imanager-api
+      Jwt__Audience: imanager-mobile
+      Jwt__ExpiresInMinutes: 60
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Build web app
+        run: dotnet build IManager.Web/IManager.Web.csproj
+
+      # A porta só abre depois do app.Initialize() (migrations + seed), então responder = seed concluído.
+      - name: Start app and wait for it
+        run: |
+          dotnet run --project IManager.Web/IManager.Web.csproj --no-build > app.log 2>&1 &
+          echo $! > app.pid
+          for i in $(seq 1 180); do
+            if ! kill -0 "$(cat app.pid)" 2>/dev/null; then
+              echo "::error::A aplicação encerrou durante a inicialização"; exit 1
+            fi
+            if curl -s -o /dev/null http://localhost:8080/Account/Login; then
+              echo "Aplicação respondeu após ${i}s"; exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Timeout esperando a aplicação subir"; exit 1
+
+      - name: Check login page
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/Account/Login)
+          echo "GET /Account/Login -> $code"
+          test "$code" = "200"
+
+      - name: Check home redirects to login
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/)
+          echo "GET / -> $code"
+          test "$code" = "302"
+
+      - name: App log
+        if: always()
+        run: cat app.log || true
