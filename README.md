@@ -1,5 +1,7 @@
 # IManager
 
+[![CI](https://github.com/gabrielsouza-dev/IManager/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielsouza-dev/IManager/actions/workflows/ci.yml)
+
 Sistema de RH para gestão de setores, cargos, folha de pagamento e holerites, com persistência de registros de ponto via integração externa com aplicação IMark.
 
 ## Tecnologias
